@@ -12,7 +12,16 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
-        $this->call(CategoryTableSeeder::class);
-        $this->call(PostTableSeeder::class);
+
+        $user = new App\User;
+        $user->name = 'admin';
+        $user->email = 'admin@admin.admin';
+        $user->password = password_hash('admin', PASSWORD_DEFAULT);
+        $user->remember_token = str_random(10);
+        $user->save();
+
+        $this->call(CategoriesTableSeeder::class);
+        $this->call(PostsTableSeeder::class);
+        $this->call(RegistrationsTableSeeder::class);
     }
 }
