@@ -14,8 +14,6 @@ class CreatePostRegistrationTable extends Migration
     public function up()
     {
         Schema::create('post_registration', function (Blueprint $table) {
-            $table->increments('id');
-
             $table->unsignedInteger('post_id');
             $table->foreign('post_id')
                 ->references('id')
@@ -25,8 +23,6 @@ class CreatePostRegistrationTable extends Migration
             $table->foreign('registration_id')
                 ->references('id')
                 ->on('registrations');
-
-            $table->timestamps();
         });
     }
 
