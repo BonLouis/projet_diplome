@@ -12,4 +12,13 @@ class Picture extends Model
 	public function post () {
 		return $this->belongsTo(Post::class);
 	}
+
+	// Mutateurs
+	public function getLinkAttribute($value) {
+		return '/images/'.$value;
+	}
+
+	public function smallLink() {
+		return preg_replace('/^(\/images\/)/', '$1s_', $this->link);
+	}
 }

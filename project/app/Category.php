@@ -11,4 +11,10 @@ class Category extends Model
     public function post () {
     	return $this->belongsToMany(Post::class);
     }
+
+    // Mutators
+
+    public function getNameAttribute($value) {
+    	return ucfirst($value);
+    }
 }
