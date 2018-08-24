@@ -1,19 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+class="h-100">
 <head>
-	<meta charset="UTF-8">
-	<title>Toutes les formations</title>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial scale=1">
-    <!-- <link href="{{asset('css/app.css')}}" rel="stylesheet"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
-	<header>
-		@include('partials.header')
-	</header>
-	@yield('content')
-	<footer>
-		@include('partials.footer')
-	</footer>
+<body class="h-100">
+	<div class="wrapper d-flex flex-column" style="min-height: 100%;">
+        <header>
+            @include('partials.header')
+        </header>
+        @yield('content')
+        <footer>
+            @include('partials.footer')
+        </footer>
+    </div>
 </body>
 </html>
