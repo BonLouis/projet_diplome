@@ -13,8 +13,10 @@ class FrontController extends Controller
 
     public function index()
     {
-    	$posts = Post::published();
-        return view('front.index');
+    	$posts = Post::published()->forthcoming()->take(2)->get();
+        return view('front.index', compact('posts'));
     }
-
+    public function show(Post $post) {
+    	return view('front.show', compact('post'));
+    }
 }
