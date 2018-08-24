@@ -14,7 +14,7 @@ class PostsTableSeeder extends Seeder
         factory(App\Post::class, 10)->create()->each(function (App\Post $post) {
             $categories = App\Category::pluck('id')->shuffle();
 
-            $post->categories()->attach($categories->slice(0, rand(1, $categories->count())));
+            $post->categories()->attach($categories->slice(0, rand(1, 4)));
             $post->picture()->save(factory(App\Picture::class)->make());
         });
     }

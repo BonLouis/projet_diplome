@@ -16,7 +16,8 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->enum('post_type', ['stage', 'formation']);
+            $table->enum('type', ['stage', 'formation']);
+            $table->string('title', 150);
             $table->text('description');
             $table->decimal('price', 7, 2)->nullable();
             $table->smallInteger('max_seats')->nullable();

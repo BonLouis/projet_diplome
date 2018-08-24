@@ -11,8 +11,12 @@ use Faker\Generator as Faker;
  */
 $dlLoremPixAndReturnLink = function () {
 	$link = str_random(12) . '.jpg';
-	$file = file_get_contents('http://lorempicsum.com/futurama/250/250' . rand(1,9));
+	$id = rand(0, 100);
+	$file = file_get_contents('http://picsum.photos/400/1250?image=' . $id);
+	$file_small = file_get_contents('http://picsum.photos/300/300?image=' . $id);
+	
 	Storage::disk('local')->put($link, $file);
+	Storage::disk('local')->put('s_' . $link, $file_small);
 
 	return $link;
 };
@@ -29,7 +33,7 @@ $this->__firstGeneration__ = true;
 // Download files cost a lot, so we can not do this regarding to:
 // - the custom .env variable to force it,
 // - an invalid (too much or not enough) number of pics under public/images
-$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== 10;
+$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== 20;
 
 
 /*
