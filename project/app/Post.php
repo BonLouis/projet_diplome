@@ -8,6 +8,9 @@ use App\{ Category, Picture, Registration };
 
 class Post extends Model
 {
+    protected $fillable = ['status'];
+
+
     public function categories () {
     	return $this->belongsToMany(Category::class);
     }
@@ -25,15 +28,31 @@ class Post extends Model
     public function scopePublished($query) {
         return $query->where('status', 'published');
     }
+    
     public function scopeDraft($query) {
         return $query->where('status', 'draft');
     }
+    
     public function scopeTrash($query) {
         return $query->where('status', 'trash');
     }
+    
     public function scopeForthcoming($query) {
     	$now = Carbon::now();
     	return $query->where('begin_at', '>', $now)->orderBy('begin_at');
+    }
+    
+    public function scopePast($query) {
+        $now = Carbon::now();
+        return $query->where('begin_at', '<', $now)->orderBy('begin_at');
+    }
+    
+    public function scopeStages($query) {
+        return $query->where('type', 'stage');
+    }
+    
+    public function scopeFormations($query) {
+        return $query->where('type', 'formation');
     }
 
 
@@ -42,11 +61,13 @@ class Post extends Model
     // public function getTypeAttribute($value) {
     //     return ucfirst($value);
     // }
+    
     public function getTitleAttribute($value) {
         return ucfirst($value);
     }
-    public function getPriceAttribute($value) {
-        return $value . ' €';
+    
+    public function priceWithCurrency() {
+        return $this->price . ' €';
     }
 
 
@@ -62,7 +83,8 @@ class Post extends Model
      */
     public function shortDescription(int $nbChar = 0) {
         if ($nbChar) {
-            $pattern = '/^([\s\w.]{'.$nbChar.'}).*$/';
+            $pattern = '/^(.{'.$nbChar.'}).*$/';
+            // $pattern = '/^([\s\w.!,?;:\'"]{'.$nbChar.'}).*$/';
             $replacement = '$1 [...]';
         } else {
             $pattern = '/\.(.*$)/';
@@ -70,6 +92,7 @@ class Post extends Model
         }
         return preg_replace($pattern, $replacement, $this->description);
     }
+    
     public function ucType() {
         return ucfirst($this->type);
     }
@@ -88,11 +111,13 @@ class Post extends Model
         }
         return $timeString;
     }
+    
     public function remainingDaysBeforeStart() {
         $now = Carbon::now();
         $start = new Carbon($this->begin_at);
         return $now->diff($start)->days;
     }
+    
     public function remainingHoursBeforeStart() {
         $now = Carbon::now();
         $start = new Carbon($this->begin_at);

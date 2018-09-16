@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Http\Request;
 use App\{ Post };
 
 class Picture extends Model
@@ -15,6 +16,7 @@ class Picture extends Model
 
 	// Mutateurs
 	public function getLinkAttribute($value) {
+		// dd(request()->getBaseUrl());
 		return '/images/'.$value;
 	}
 
