@@ -20,7 +20,7 @@ class CreatePostsTable extends Migration
             $table->string('title', 150);
             $table->text('description');
             $table->decimal('price', 7, 2)->nullable();
-            $table->smallInteger('max_seats')->nullable();
+            $table->smallInteger('max_seats', false, true)->nullable();
             $table->dateTime('begin_at')->nullable();
             $table->dateTime('end_at')->nullable();
             $table->enum('status', ['draft', 'published', 'trash']);

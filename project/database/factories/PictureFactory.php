@@ -11,17 +11,26 @@ use Faker\Generator as Faker;
  */
 $dlLoremPixAndReturnLink = function () {
 	$link = str_random(12) . '.jpg';
-	$id = rand(0, 100);
-	$file = file_get_contents('http://picsum.photos/400/1250?image=' . $id);
-	$file_small = file_get_contents('http://picsum.photos/300/300?image=' . $id);
+	$id = rand(0, 90);
+	$file = file_get_contents('https://source.unsplash.com/collection/365/700x700?sig=' . $id);
+	// $file_small = file_get_contents('https://loremflickr.com/300/300?lock=' . $id);
 	
 	Storage::disk('local')->put($link, $file);
-	Storage::disk('local')->put('s_' . $link, $file_small);
-
+	// Storage::disk('local')->put('s_' . $link, $file_small);
+	echo $link;
 	return $link;
 };
 // We first get all files to count them and/or use their link
 $files = Storage::allFiles();
+
+// But as we now have the short pic for them, we want to filter those and only keep the big one.
+// It's easy because those are always strings of 16 length.
+// Let's filter them and take it in another array.
+
+
+$filesLink = array_values(array_filter($files, function($fileName) {
+	return strlen($fileName) === 16;
+}));
 
 /*
 	Some custom variables put into $this to make them persistant,
@@ -33,15 +42,14 @@ $this->__firstGeneration__ = true;
 // Download files cost a lot, so we can not do this regarding to:
 // - the custom .env variable to force it,
 // - an invalid (too much or not enough) number of pics under public/images
-$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== 20;
-
+$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== Config::get('seed.nb_posts') * 2;
 
 /*
 	The real factory stuff.
 	Should be easily understandable
 	if previous comments have been read.
  */
-$factory->define(App\Picture::class, function (Faker $faker) use($dlLoremPixAndReturnLink, $files) {
+$factory->define(App\Picture::class, function (Faker $faker) use($dlLoremPixAndReturnLink, $filesLink) {
 
 	if ($this->__weShouldCleanStorage__) {
 		if ($this->__firstGeneration__) {
@@ -60,7 +68,7 @@ $factory->define(App\Picture::class, function (Faker $faker) use($dlLoremPixAndR
     }
     return [
     	//
-		'link' => $files[App\Picture::all()->last()->id ?? 0],
+		'link' => $filesLink[App\Picture::all()->last()->id ?? 0],
 		'title' => $faker->word,
 	];
 });
