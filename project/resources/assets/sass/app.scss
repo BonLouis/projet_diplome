@@ -2,13 +2,103 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
+// Bootstrap
+// @import '~bootstrap/scss/bootstrap';
+
+//Materialize
+@import "~materialize-css/sass/materialize.scss";
+
 // Variables
 @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+// Scrollbar
+@import 'scrollbar';
+
+// Customs helpers
+@import 'custom-helpers';
 
 .navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+	background-color: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+.card-fab {
+    position: relative;
+    z-index: 1;
+}
+/**
+ * Customs styles
+ *
+ */
+body {
+	font-family: $font-family-sans-serif;
+}
+
+
+// Animations
+@keyframes blink {
+	0% { opacity: 0; }
+	50% { opacity: 0; }
+	75% { opacity: .8; }
+	100% { opacity: 0; }
+}
+// Nav, just to fix an issue
+#pin {
+	z-index: 2;
+}
+// Header
+#header {
+	height: 100vh;
+	background: center/cover no-repeat;
+	// background: center/cover no-repeat url('../images/header-home.jpg');
+
+	display: grid;
+	grid-template-rows: 1fr;
+	h1 {
+		justify-self: center;
+		align-self: center;
+	}
+	#scroll-down {
+		position: relative;
+		bottom: 3rem;
+		cursor: pointer;
+		div {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			i {
+				opacity: 0;
+				height: 1rem;
+				animation-name: blink;
+				animation-duration: 2s;
+				animation-iteration-count: infinite;
+				animation-timing-function: ease-out;
+
+				&:first-child {
+					animation-delay: .90s;
+				}&:nth-child(2) {
+					animation-delay: 1s;
+				}&:last-child {
+					animation-delay: 1.10s;
+				}
+			}
+		}
+	}
+}
+// Loader
+#loader {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 99999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+}
+#bandeau {
+	height: 10rem;
+	// padding: 0 10vw 0 10vw;
 }

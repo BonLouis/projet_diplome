@@ -1,0 +1,91 @@
+// Navigation
+.modal.full {                                                                                                      
+	width: 100vw; 
+	max-height: 100vh; 
+	height: 100vh;
+	top: 0 !important;
+}
+
+
+#nav-modal {
+	.modal-content {
+		height: 100%;
+		ul {
+			margin: 0;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-around;
+			align-items: center;
+
+			text-transform: uppercase;
+			font-size: 4rem;
+			
+			li {
+				position: relative;
+				a {
+					padding: 2rem;
+					overflow: hidden;
+				}
+				a:after, a:before,
+				span:after, span:before {
+					content: "";
+					display: block;
+					transition: all ease-out 0.2s;
+					background-color: #fff;
+					// background-color: $yellow;
+					position: absolute;
+
+				}
+				a:after, a:before {
+					width: 100%;
+					height: 5px;
+				}
+				span:after, span:before {
+					height: 100%;
+					width: 5px;
+				}
+				a:before {
+					top: 0;
+					right: 0;
+					transform: translateX(-101%);
+					// 101% to remove this ugly 1px before hover
+				}
+				a:after {
+					bottom: 0;
+					left: 0;
+					transform: translateX(101%);
+					// 101% to remove this ugly 1px before hover
+				}
+				span:before {
+					bottom: 0;
+					right: 0;
+					transform: translateY(-100%);
+				}
+				span:after {
+					top: 0;
+					left: 0;
+					transform: translateY(100%);
+				}
+
+				a:hover:after, a:hover:before,
+				a:hover span:after, a:hover span:before {
+					transform: translate(0, 0);
+				}
+			}
+		}
+	}
+
+	li:first-child {
+		// font-size: initial;
+	}
+	.input-field input[type=text],
+	.input-field input[type=text]:focus {
+	 	border-bottom: 1px solid #fff;
+	 	box-shadow: 0 1px 0 0 #fff;
+	}
+	.input-field label, .input-field input[type=text]:focus + label,
+	.input-field .prefix, .input-field .prefix.active {
+	 	color: #fff;
+	}
+}
