@@ -2,6 +2,6 @@
 
 @section('content')
 
-@include('partials.postCard', ['details' => true])
+@include('partials.cards.postDetails')
 
 @endsection

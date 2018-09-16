@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+class="h-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,32 +21,20 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @yield('css')
 </head>
 <body>
     <header>
-        @include('partials.nav')
+        @include('back.nav')
     </header>
 
-    <main class="container">
+    <div class="container">
         @yield('content')
-    </main>
+    </div>
 
-    @include('partials.footer')
+    @stack('backScripts')
     
-    @include('partials.loader')
-    <!--
-        Not defered script,
-        loaded first
-    -->
-    <script src="{{ asset('js/scripts/beforeDOMLoad.js') }}"></script>
-    <!--
-        Childs scripts will be put here
-    -->
-    @stack('scripts')
-
 </body>
 </html>
