@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+const LiveReloadPlugin = require('webpack-livereload-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -10,6 +11,15 @@ let mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
-
-mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+mix
+	.disableNotifications()
+	.browserSync({
+		proxy: 'localhost:8000',
+		notify: false
+	})
+	.sass('resources/assets/sass/app.scss', 'public/css')
+	.js('resources/assets/js/app.js', 'public/js')
+	.js('resources/assets/js/scripts/beforeDOMLoad.js', 'public/js/scripts')
+	.js('resources/assets/js/scripts/initMaterialize.js', 'public/js/scripts')
+	.sourceMaps();
+	// .js('resources/assets/js/scripts/test.js', 'public/js/scripts')

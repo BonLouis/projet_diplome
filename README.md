@@ -11,3 +11,7 @@ width="100%" height="auto" alt="UML" />
 
 ## Annexes
 * [Lien du tableau Trello](https://trello.com/b/9cDlhkeO/projet-laravel)
+
+
+## Seed
+Des options de seed peuvent être trouvées sous config/seed.php
