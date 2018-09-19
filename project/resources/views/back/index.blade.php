@@ -4,9 +4,9 @@
 <div></div>
 {{-- Top buttons --}}
 <div class="section center-align">
-		<a class="waves-effect waves-light btn-small"><i class="material-icons left">add_circle</i>Créer</a>
-		<a class="waves-effect waves-light btn-small"><i class="material-icons left">mode_edit</i>Édition rapide</a>
-		<a id="trash" class="waves-effect waves-light btn-small{{ $trash->count() ? '' : ' disabled' }}">
+		<a id="create" class="waves-effect waves-light btn-small modal-trigger" href="#edit-modal"><i class="material-icons left">add_circle</i>Créer</a>
+		{{-- <a class="waves-effect waves-light btn-small"><i class="material-icons left">mode_edit</i>Édition rapide</a> --}}
+		<a id="trash" href="#edit-modal" class="waves-effect waves-light btn-small modal-trigger{{ $trash->count() ? '' : ' disabled' }}">
 			<i class="material-icons left">delete</i>
 			Corbeille (<span>{{ $trash->count() }}</span>)
 		</a>
@@ -47,10 +47,10 @@
 			</td>
 			<td>{{ $post->title }}</td>
 			<td>{{ $post->type }}</td>
-			{{-- <td>{{ $post->price }}</td> --}}
+			<td>{{ $post->price }}</td>
 			{{-- <td>{{ $post->max_seats }}</td> --}}
 			{{-- <td>{{ $post->begin_at }}</td> --}}
-			<td>{{ $post->end_at }}</td>
+			{{-- <td>{{ $post->end_at }}</td> --}}
 			<td class="status">{{ $post->status }}</td>
 			<td>{{ $post->open }}</td>
 			<td class="post-delete">
@@ -103,7 +103,7 @@
 		};
 		const reinitModal = yo => {
 			$('select').formSelect();
-			$('.datepicker').datepicker({container: 'body'});
+			$('.datepicker').datepicker({container: 'body', format: 'yyyy-mm-dd'});
 			$('.timepicker').timepicker({container: 'body'});
 			M.updateTextFields();
 			M.textareaAutoResize($('textarea'));
@@ -144,18 +144,150 @@
 		$('#edit-modal button[type="submit"]').click(function() {
 			const form = $('#form-to-send');
 			const id = form.data('post-id');
+			const begin_at = form.find('#_begin_at_date').val() + ' ' + form.find('#_begin_at_hour').val();
+			const end_at = form.find('#_end_at_date').val() + ' ' + form.find('#_end_at_hour').val();
+			form.find('[name="begin_at"]').val(begin_at);
+			form.find('[name="end_at"]').val(end_at);
 			axios(`/admin/post/${id}`, {
-				method: $('[name="_method"]').attr('value')
+				method: $('[name="_method"]').attr('value'),
+				data: form.serialize()
 			})
-			.then(d => {
-
+			.then(({data}) => {
+				M.toast({
+					html: `Post n°${data} créé avec succès`,
+					classes	: 'green'
+				});
 			})
-			.catch(err => {
-				console.log(err);
+			.catch(({ response }) => {
+				$('#form-to-edit input[name]').removeClass('invalid');
+				const form = $('#form-to-send');
+				for (const name in response.data.errors) {
+					for (const error of response.data.errors[name]) {
+						// We just check that because of the hidden input dynamically charged
+						if (name === 'end_at') {
+							form.find('#_end_at_date').addClass('invalid');
+							form.find('#_end_at_date ~ .helper-text').attr('data-error', error)
+						} else {
+							form.find(`[name="${name}"]`).addClass('invalid');
+							form.find(`[name="${name}"] ~ .helper-text`).attr('data-error', error)
+						}
+					}
+				}
 			})
 		});
-
-		// $('#trash').click('')
+		$('#create').click(function() {
+			axios.get(`/admin/loadBlankForm`)
+				.then(({ data }) => {
+					$('.modal-content').html(data);
+					reinitModal();
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+		});
+		const initForTrash = holà => {
+			// Thanks Materialize...
+			$('[id*="untrash"]').click(function() {
+				const isChecked = $(this).attr('checked');
+				if (isChecked) {
+					$(this).removeAttr('checked');
+				} else {
+					$(this).attr('checked', '');
+				}
+			});
+			$('#trash_cancel').click(function() {
+				$('#edit-modal').modal('close');
+			});
+			$('#trash_untrash_all').click(function() {
+				axios.post(`/admin/untrash`)
+				.then(aloha => {
+					M.toast({
+						html: 'Tout les trash sont passés en brouillons.',
+						classes	: 'green'
+					});
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+			});
+			$('#trash_untrash_some').click(function() {
+				const ids = [];
+				$('input[id*="untrash"][checked]').each(function(i,e) {
+					ids.push($(e).attr('id').replace('untrash-', ''))
+				});
+				axios.post(`/admin/untrash`, {
+					ids
+				})
+				.then(aloha => {
+					M.toast({
+						html: 'Tout les trash sont passés en brouillons.',
+						classes	: 'green'
+					});
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+			});
+			$('#trash_confirm_all').click(function() {
+				axios.get(`/admin/destroyTrash`)
+				.then(aloha => {
+					M.toast({
+						html: 'Tout les trash sont passés en brouillons.',
+						classes	: 'green'
+					});
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+			});
+			$('#trash_confirm_some').click(function() {
+				const ids = [];
+				$('input[id*="untrash"][checked]').each(function(i,e) {
+					ids.push($(e).attr('id').replace('untrash-', ''))
+				});
+				axios.post(`/admin/untrash`, {
+					ids
+				})
+				.then(aloha => {
+					M.toast({
+						html: 'Tout les trash sont passés en brouillons.',
+						classes	: 'green'
+					});
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+			});
+		}
+		$('#trash').click(function() {
+			axios.get(`/admin/loadTrashes`)
+				.then(({ data }) => {
+					$('#edit-modal').html(data);
+					initForTrash();
+				})
+				.catch(err => {
+					M.toast({
+						html: err.message,
+						classes	: 'red'
+					});
+				});
+		});
+		
 	});
 </script>
 @endpush
