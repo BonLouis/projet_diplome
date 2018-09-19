@@ -9,18 +9,14 @@ use App\{ Post };
 
 class Picture extends Model
 {
+	protected $fillable = ['link', 'post_id', 'title'];
     // maybe optional ?
 	public function post () {
 		return $this->belongsTo(Post::class);
 	}
-
 	// Mutateurs
 	public function getLinkAttribute($value) {
 		// dd(request()->getBaseUrl());
-		return '/images/'.$value;
-	}
-
-	public function smallLink() {
-		return preg_replace('/^(\/images\/)/', '$1s_', $this->link);
+		return url('/images').'/'.$value;
 	}
 }

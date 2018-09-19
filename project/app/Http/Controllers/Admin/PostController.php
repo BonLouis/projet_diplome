@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
-use App\{ Post, Category };
+use App\{ Post, Category, Picture };
 use App\Http\Requests\PostRequest;
+use App\Rules\ImageUrl;
 
 class PostController extends Controller
 {   
@@ -42,9 +44,17 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
-
-        Post::create($request->all);
+    public function store(PostRequest $request) {
+        $post = Post::create($request->except(['picture_url']));
+        $link = str_random(12) . '.jpg';
+        $file = file_get_contents($request->picture_url);
+        Storage::disk('local')->put($link, $file);
+        Picture::create([
+            'link' => $link,
+            'post_id' => $post->id,
+            'title' => $post->title
+        ]);
+        return $post->id;
     }
 
     /**
@@ -75,7 +85,28 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(PostRequest $request, Post $post) {
-        dd($post, $request->all());
+        $post->update($request->except(['picture_url']));
+        if ($post->picture->link !== $request->picture_url) {
+            $url = preg_replace('/(\/\/\w+):.+/', '$1', url('/'));
+            $url = preg_replace('/\//', '\/', $url);
+            $pattern = '/'.$url.'/';
+            $pattern2 = '/https?:\/\/\w+:\d+/';
+            if (!preg_match($pattern, $request->picture_url) && !preg_match($pattern2, $request->picture_url)) {
+
+                // Here we can safely update the picture link !
+                $picture = Picture::where('post_id', $post->id);
+                $link = str_random(12) . '.jpg';
+                $file = file_get_contents($request->picture_url);
+                Storage::disk('local')->put($link, $file);
+                $picture->update(['link' => $link]);
+            } else {
+                //  The url seems to point to our app, which is not possible.
+                //  We ignore it.
+            }
+        } else {
+            // No changes in url, we ignore it.
+        }
+        return 'ok';
     }
 
     /**
@@ -85,7 +116,7 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        //
+        dd($id);
     }
 
     public function trash(Post $post) {
@@ -93,10 +124,5 @@ class PostController extends Controller
         $post->update(['status' => $newStatus]);
         $newCount = Post::trash()->count();
         return compact('newStatus', 'newCount');
-    }
-
-    public function loadOneAndEdit(Post $post) {
-        // dd($post);
-        return view('back.edit', compact('post'));
     }
 }

@@ -34,6 +34,10 @@ Route::middleware('auth')->namespace('Admin')->prefix('admin')->group(function()
 
 	// This route will be used with Ajax
 	Route::get('trash/{post}', 'PostController@trash')->where(['post'=>'[0-9]+'])->name('trash');
-	Route::get('loadOneAndEdit/{post}', 'PostController@loadOneAndEdit')->where(['post'=>'[0-9]+'])->name('loadOneAndEdit');
+	Route::get('loadOneAndEdit/{post}', 'AjaxController@loadOneAndEdit')->where(['post'=>'[0-9]+']);
+	Route::get('loadBlankForm', 'AjaxController@loadBlankForm');
+	Route::get('loadTrashes', 'AjaxController@loadTrashes');
+	Route::post('untrash', 'AjaxController@untrash');
+	Route::get('destroyTrash', 'AjaxController@destroyTrash');
 });
 // Route::get('/home', 'HomeController@index')->name('home');

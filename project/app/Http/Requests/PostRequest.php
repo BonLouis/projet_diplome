@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Rules\ImageUrl;
 
 class PostRequest extends FormRequest
 {
@@ -24,8 +25,7 @@ class PostRequest extends FormRequest
             'end_at' => 'required|date|after:begin_at',
             'status' => ['required', Rule::in(['draft', 'published', 'trash'])],
             'open' => 'required|boolean',
-            'picture_up' => 'file|image|required_without:picture_url',
-            'picture_url' => 'required_without:picture_up|url',
+            'picture_url' => ['required', 'url', new ImageUrl] 
         ];
     }
 }

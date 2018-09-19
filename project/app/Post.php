@@ -8,7 +8,7 @@ use App\{ Category, Picture, Registration };
 
 class Post extends Model
 {
-    protected $fillable = ['status'];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
 
     public function categories () {
