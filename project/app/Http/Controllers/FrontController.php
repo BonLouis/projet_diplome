@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\{ Post, Category };
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Contact;
 
 use Carbon\Carbon;
 
@@ -29,5 +31,17 @@ class FrontController extends Controller
     	$posts = Post::published()->formations()->orderBy('begin_at', 'asc')->paginate($this->pagination);
     	// dd($posts);
     	return view('front.index', compact('posts'));
+    }
+    public function showContact() {
+        return view('front.contact');
+    }
+    public function sendContactMail(Request $request) {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email',
+            'body' => 'required'
+        ]);
+        Mail::to('admin@admin.fr')->send(new Contact($request->except('_token')));
+        return redirect('/')->with('successMsg', 'Votre mail à bien été envoyé ! Nous vous répondrons dès que possible.');
     }
 }

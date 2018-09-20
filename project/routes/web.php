@@ -21,6 +21,7 @@ Route::get('/post/{post}', 'FrontController@show')->where(['post'=>'[0-9]+'])->n
 Route::get('/stages', 'FrontController@showStages')->name('showStages');
 Route::get('/formations', 'FrontController@showFormations')->name('showFormations');
 Route::get('/contact', 'FrontController@showContact')->name('contact');
+Route::post('/contact', 'FrontController@sendContactMail')->name('contact.send');
 // TODO
 // Route::get('/category/{category}', 'FrontController@showPostByCategory')->where(['category'=>'[0-9]+']);
 
