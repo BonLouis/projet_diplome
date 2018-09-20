@@ -46,6 +46,8 @@
         Childs scripts will be put here
     -->
     @stack('scripts')
+    @include('partials.messager')
+
 
 </body>
 </html>
