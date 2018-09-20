@@ -18,13 +18,14 @@ class CreateCategoryPostTable extends Migration
             $table->unsignedInteger('category_id');
             $table->foreign('category_id')
                 ->references('id')
-                ->on('categories');
+                ->on('categories')
+                ->onDelete('cascade');
 
             $table->unsignedInteger('post_id');
             $table->foreign('post_id')
                 ->references('id')
-                ->on('posts');
-
+                ->on('posts')
+                ->onDelete('cascade');
         });
     }
 
