@@ -10,19 +10,29 @@ class Post extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($post) { // before delete() method call this
+             $post->picture()->delete();
+             $post->categories()->detach();
+             $post->registrations()->detach();
+        });
+    }
 
     public function categories () {
-    	return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class);
     }
 
     public function picture () {
-    	return $this->hasOne(Picture::class);
+        return $this->hasOne(Picture::class);
     }
 
     public function registrations () {
-    	return $this->belongsToMany(Registration::class);
+        return $this->belongsToMany(Registration::class);
     }
 
+    
     // Scopes
 
     public function scopePublished($query) {
@@ -124,3 +134,5 @@ class Post extends Model
         return $now->diff($start)->h;
     }
 }
+
+
