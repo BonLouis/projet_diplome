@@ -9,15 +9,44 @@ use Faker\Generator as Faker;
  * @var function
  * @return string ('<hash>.jpg')
  */
+function callAPI($url){
+   $curl = curl_init();
+   // OPTIONS:
+   curl_setopt($curl, CURLOPT_URL, $url);
+   curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+      'APIKEY: 111111111111111111111',
+      'Content-Type: application/json',
+   ));
+   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+   curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+   // EXECUTE:
+   $result = curl_exec($curl);
+   if(!$result){die("Connection Failure");}
+   curl_close($curl);
+   return $result;
+};
 $dlLoremPixAndReturnLink = function () {
+	$api_key='LY6SNqXBxMpxb6bOVDb85GodaUcXD1I2hh7VnxoF';
+	// Should not exceed the today's date.
+	// APOD of tomorrow is not published yet! ;)
+	$y = rand(2015, 2018);
+	$m = rand(1, 9);
+	$d = rand(1, 20);
+	$url= 'https://api.nasa.gov/planetary/apod?date='.$y.'-'.$m.'-'.$d.'&api_key='.$api_key;
 	$link = str_random(12) . '.jpg';
-	$id = rand(0, 90);
-	$file = file_get_contents('https://source.unsplash.com/collection/365/700x700?sig=' . $id);
+	$get_data = callAPI($url);
+	$response = json_decode($get_data, true);
+	if (isset($response['url'])) {
+		$file = file_get_contents($response['url']);
+	} else {
+		dd($response);
+	}
 	// $file_small = file_get_contents('https://loremflickr.com/300/300?lock=' . $id);
 	
 	Storage::disk('local')->put($link, $file);
 	// Storage::disk('local')->put('s_' . $link, $file_small);
-	echo $link;
+	echo $link."\r\n";
 	return $link;
 };
 // We first get all files to count them and/or use their link
@@ -42,7 +71,7 @@ $this->__firstGeneration__ = true;
 // Download files cost a lot, so we can not do this regarding to:
 // - the custom .env variable to force it,
 // - an invalid (too much or not enough) number of pics under public/images
-$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== Config::get('seed.nb_posts') * 2;
+$this->__weShouldCleanStorage__ = env('CLEAN_STORAGE_AT_SEED') || count($files) !== Config::get('seed.nb_posts');
 
 /*
 	The real factory stuff.
