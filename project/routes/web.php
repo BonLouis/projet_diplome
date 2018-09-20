@@ -25,10 +25,7 @@ Route::post('/contact', 'FrontController@sendContactMail')->name('contact.send')
 // TODO
 // Route::get('/category/{category}', 'FrontController@showPostByCategory')->where(['category'=>'[0-9]+']);
 
-// Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() {
-// 	// Route::resource('category', 'CategoryController')->only(['index', 'create', 'edit']);
-// 	Route::resource('post', 'PostController')->only(['index', 'create', 'edit']);
-// });
+Route::post('/search', 'SearchController@doQuery');
 
 Route::middleware('auth')->namespace('Admin')->prefix('admin')->group(function() {
 	Route::resource('post', 'PostController');
@@ -39,6 +36,6 @@ Route::middleware('auth')->namespace('Admin')->prefix('admin')->group(function()
 	Route::get('loadBlankForm', 'AjaxController@loadBlankForm');
 	Route::get('loadTrashes', 'AjaxController@loadTrashes');
 	Route::post('untrash', 'AjaxController@untrash');
-	Route::get('destroyTrash', 'AjaxController@destroyTrash');
+	Route::post('destroyTrash', 'AjaxController@destroyTrash');
 });
 // Route::get('/home', 'HomeController@index')->name('home');
