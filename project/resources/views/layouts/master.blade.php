@@ -46,8 +46,13 @@
         Childs scripts will be put here
     -->
     @stack('scripts')
+    {{-- 
+        His name says everything.
+     --}}
     @include('partials.messager')
-
+    {{-- 
+     --}}
+    @include('partials.search')
 
 </body>
 </html>

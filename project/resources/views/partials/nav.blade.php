@@ -12,6 +12,9 @@
 			<a href="#" class="brand-logo">Form&Vous</a>
 			{{-- Nav for desktop --}}
 			<ul id="nav-mobile" class="right hide-on-med-and-down">
+				<li>    
+					<a href="#search-modal" class="modal-trigger"><i class="white-text material-icons prefix">search</i></a>
+				</li>
 				<li class="white-text"><a href="{{ route('home') }}">Accueil</a></li>
 				<li class="white-text"><a href="{{ route('showFormations') }}">Formations</a></li>
 				<li class="white-text"><a href="{{ route('showStages') }}">Stages</a></li>
@@ -30,10 +33,10 @@
 		</div>
 	</nav>
 	<ul id="sidenav" class="sidenav blue-grey">
-		<li class="waves-effect white-text"><a href="{{ route('home') }}">Accueil</a></li>
-		<li class="waves-effect white-text"><a href="{{ route('showFormations') }}">Formations</a></li>
-		<li class="waves-effect white-text"><a href="{{ route('showStages') }}">Stages</a></li>
-		<li class="waves-effect white-text"><a href="{{ route('contact') }}">Contact</a></li>
+		<li><a class="waves-effect white-text" href="{{ route('home') }}">Accueil</a></li>
+		<li><a class="waves-effect white-text" href="{{ route('showFormations') }}">Formations</a></li>
+		<li><a class="waves-effect white-text" href="{{ route('showStages') }}">Stages</a></li>
+		<li><a class="waves-effect white-text" href="{{ route('contact') }}">Contact</a></li>
 		<li class="container"><div class="divider"></div></li>
 		@guest
 		<li><a class="white-text waves-effect" href="{{ route('login') }}">S'identifier</a></li>

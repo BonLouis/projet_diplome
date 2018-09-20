@@ -238,12 +238,9 @@
 				});
 			});
 			$('#trash_confirm_all').click(function() {
-				axios.get(`/admin/destroyTrash`)
-				.then(aloha => {
-					M.toast({
-						html: 'Tout les trash sont passés en brouillons.',
-						classes	: 'green'
-					});
+				axios.post(`/admin/destroyTrash`)
+				.then(({data}) => {
+					
 				})
 				.catch(err => {
 					M.toast({
@@ -257,8 +254,9 @@
 				$('input[id*="untrash"][checked]').each(function(i,e) {
 					ids.push($(e).attr('id').replace('untrash-', ''))
 				});
-				axios.post(`/admin/untrash`, {
-					ids
+				axios.post(`/admin/destroyTrash`, {
+					ids,
+					some: true
 				})
 				.then(aloha => {
 					M.toast({

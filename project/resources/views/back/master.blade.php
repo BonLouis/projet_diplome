@@ -33,7 +33,8 @@ class="h-100">
     <div class="container">
         @yield('content')
     </div>
-
+    
+    @include('partials.messager')
     @stack('backScripts')
     
 </body>

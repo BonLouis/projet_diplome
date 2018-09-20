@@ -1,9 +1,11 @@
+@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))
+
 <div class="row">
 	@foreach($posts as $post)
 	<div class="col s12 m6">
-		<div class="card hoverable">
+		<div class="card large hoverable" style="height: 465px;">
 			<div class="card-image">
-				<img src="{{ $post->picture->link }}">
+				<img src="{{ $post->picture->link }}" style="min-height: 280px;">
 				<span class="card-title">{{ $post->title }}</span>
 			</div>
 			<div class="card-fab">
@@ -51,4 +53,5 @@
 	</div>
 	@endforeach
 </div>
-	
+
+@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))

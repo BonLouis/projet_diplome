@@ -6,7 +6,7 @@
 
 {{-- A trick to auto inject pagination
 	if it's has been specified by the controller --}}
-@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))
+{{-- @includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts')) --}}
 
 {{-- @forelse($posts as $post) --}}
 @include('partials.cards.post', compact('posts'))
@@ -14,6 +14,6 @@
 	{{-- <h2>Nous n'avons aucune formation pour le moment.</h2> --}}
 {{-- @endforelse --}}
 
-@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))
+{{-- @includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts')) --}}
 
 @endsection
