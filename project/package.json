@@ -12,7 +12,6 @@
     "devDependencies": {
         "axios": "^0.18.0",
         "bootstrap": "^4.0.0",
-        "browser-sync": "^2.24.6",
         "browser-sync-webpack-plugin": "^2.0.1",
         "cross-env": "^5.1",
         "jquery": "^3.2",
@@ -23,6 +22,7 @@
         "webpack-livereload-plugin": "^2.1.1"
     },
     "dependencies": {
+        "browser-sync": "^2.11.2",
         "materialize-css": "^1.0.0",
         "smoothscroll-for-websites": "^1.4.6"
     }
