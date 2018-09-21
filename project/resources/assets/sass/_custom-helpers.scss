@@ -8,11 +8,23 @@
 .jcsa {
 	justify-content: space-around;
 }
+.jcsb {
+	justify-content: space-around;
+}
 .aic {
 	align-items: center;
 }
+.aisa {
+	align-items: space-around;
+}
 .w100 {
 	width: 100px;
+}
+.py-5 {
+	padding: 2.5rem 0 !important;
+}
+.my-2 {
+	margin: 1rem 0 !important;
 }
 .inline > * {
 	display: inline;
@@ -24,6 +36,15 @@
 	width: 100vw;
 	left: -5vw;
 	padding: 0 5vw 0 5vw;
+}
+.overlay-fallback {
+	// this class target the body.
+	// In case we are in a browser which don't know
+	// about 'overflow: overlay', it will simply be ignored
+	// and will applied the previous properties. 
+	overflow: auto;
+	overflow-x: hidden;
+	overflow: overlay;
 }
 @media only screen and (min-width: 601px) {
 	.over-wrapper-container {

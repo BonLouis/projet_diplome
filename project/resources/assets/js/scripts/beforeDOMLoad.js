@@ -11,6 +11,12 @@ document.querySelector('body').style.overflow = 'hidden';
  * But because the load of app.js is deffered (which is good),
  * we can't use Jquery before (1).
  *
+ * Some pathname verification are done in the same goal.
  */
-if ((new URLSearchParams(window.location.search)).has('page'))
+if  (
+		(new URLSearchParams(window.location.search)).has('page')
+		|| window.location.pathname === '/login'
+		|| window.location.pathname === '/contact'
+		|| window.location.pathname === '/post'
+	)
 	window.scrollTo(0, document.querySelector('#pin').offsetTop);

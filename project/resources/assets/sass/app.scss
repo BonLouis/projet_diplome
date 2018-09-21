@@ -25,6 +25,13 @@
     position: relative;
     z-index: 1;
 }
+#toast-container {
+	top: inherit !important;
+	right: inherit !important;
+    left: 5% !important;
+    bottom: 7% !important;
+    // max-width: 90% !important;
+}
 /**
  * Customs styles
  *

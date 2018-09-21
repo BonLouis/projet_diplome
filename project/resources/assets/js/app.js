@@ -11,7 +11,8 @@ require('smoothscroll-for-websites')({
 });
 $(window).bind('load', hello => {
     $('#loader').fadeOut();
-    $('body').css('overflow', 'overlay');
+    $('body').css('overflow', '');
+    $('body').addClass('overlay-fallback');
 });
 // window.Vue = require('vue');
 
