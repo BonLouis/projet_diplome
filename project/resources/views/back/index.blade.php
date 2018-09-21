@@ -1,128 +1,57 @@
 @extends('back.master')
-
 @section('content')
 <div></div>
 {{-- Top buttons --}}
 <div class="section center-align">
-		<a id="create" class="waves-effect waves-light btn-small modal-trigger" href="#edit-modal"><i class="material-icons left">add_circle</i>Créer</a>
-		{{-- <a class="waves-effect waves-light btn-small"><i class="material-icons left">mode_edit</i>Édition rapide</a> --}}
-		<a id="trash" href="#edit-modal" class="waves-effect waves-light btn-small modal-trigger{{ $trash->count() ? '' : ' disabled' }}">
-			<i class="material-icons left">delete</i>
-			Corbeille (<span>{{ $trash->count() }}</span>)
-		</a>
-</div>
-{{-- Trash button --}}
-<div class="fixed-action-btn top-right">
-	{{-- @if($trash->count())
-	<span class="badge new" data-badge-caption="">{{ $trash->count() }}</span>
-	@endif --}}
-	<a class="btn-floating btn-large waves-effect waves-light red right">
-		<i class="material-icons">delete</i>
+	<a id="create" class="waves-effect waves-light btn-small modal-trigger" href="#modal"><i class="material-icons left">add_circle</i>Créer</a>
+	{{-- <a class="waves-effect waves-light btn-small"><i class="material-icons left">mode_edit</i>Édition rapide</a> --}}
+	<a id="trash" href="#modal" class="waves-effect waves-light btn-small modal-trigger{{ $trash->count() ? '' : ' disabled' }}">
+		<i class="material-icons left">delete</i>
+		Corbeille (<span id="trash-count">{{ $trash->count() }}</span>)
 	</a>
 </div>
+
 {{-- Posts list --}}
-<table class="responsive-table highlight">
-	<thead>
-		<tr>
-			<th>#</th>
-			<th></th>
-			<th>Titre</th>
-			<th>Type</th>
-			<th>Prix</th>
-			{{-- <th>Places</th> --}}
-			{{-- <th>Début</th> --}}
-			{{-- <th>Fin</th> --}}
-			<th>Status</th>
-			<th>Ouvert</th>
-		</tr>
-	</thead>
-	<tbody>
-	@foreach($posts as $post)
-		<tr>
-			<th class="post-id">{{ $post->id }}</th>
-			<td class="post-edit">
-				<a class="edit btn-floating btn-small modal-trigger" href="#edit-modal">
-					<i class="material-icons">mode_edit</i>
-				</a>
-			</td>
-			<td>{{ $post->title }}</td>
-			<td>{{ $post->type }}</td>
-			<td>{{ $post->price }}</td>
-			{{-- <td>{{ $post->max_seats }}</td> --}}
-			{{-- <td>{{ $post->begin_at }}</td> --}}
-			{{-- <td>{{ $post->end_at }}</td> --}}
-			<td class="status">{{ $post->status }}</td>
-			<td>{{ $post->open }}</td>
-			<td class="post-delete">
-				<a class="btn-floating btn-small red">
-					<i class="material-icons">{{ $post->status === 'trash' ? 'undo' : 'delete'}}</i>
-				</a>
-			</td>
-		</tr>
-	@endforeach
-	</tbody>
-</table>
-<div id="edit-modal" class="modal modal-fixed-footer">
-	<div class="modal-content">
-	</div>
-	<div class="modal-footer center-align">
-		<button type="submit" class="btn btn-primary">Envoyer</button>
-	</div>
+<div id="table-target">
+	@include('back.table', compact('posts'))
+</div>
+<div id="modal" class="modal modal-fixed-footer">
 </div>
 @endsection
-
 @push('backScripts')
 <script>
-	document.addEventListener('DOMContentLoaded', ready => {
-		const toggleTrashIcon = tdTarget => {
-			const i = tdTarget.find('i');
-			const newIcon = i.text() === 'delete' ? 'undo' : 'delete';
-			i.text(newIcon);
-		};
-		const togglePostStatus = (tdTarget, status) => {
-			tdTarget.siblings('.status').text(status);
-		};
-		const updateTrashCount = value => {
-			$('#trash span, .badge').text(value);
-			if (value) {
-				$('#trash').removeClass('disabled');
-			} else {
-				$('#trash').addClass('disabled');
-			}
-		};
-		const toaster = (id, status) => {
-			let html = '';
-			if (status === 'trash')
-				html = `Post n°${id} ajouté à la corbeille.`;
-			else
-				html = `Post n°${id} retiré de la corbeille avec le status '${status}'.`;
-			M.toast({
-				html,
-				classes	: 'green'
+// Will be triggered on html rebuild with ajax content.
+const rebuildEvent = new Event('rebuild');
+document.addEventListener('rebuild', mainHandler)
+
+document.addEventListener('DOMContentLoaded', ready => {
+	$('#modal').modal();
+	mainHandler();
+	$('#create').click(function() {
+		axios.get(`/admin/loadBlankForm`)
+			.then(({ data }) => {
+				$('.modal-content').html(data);
+				reinitModal();
 			});
-		};
-		const reinitModal = yo => {
-			$('select').formSelect();
-			$('.datepicker').datepicker({container: 'body', format: 'yyyy-mm-dd'});
-			$('.timepicker').timepicker({container: 'body'});
-			M.updateTextFields();
-			M.textareaAutoResize($('textarea'));
-		}
-		$('#edit-modal').modal();
-		$('.post-edit, .post-delete').click(function() {
+	});
+	$('#trash').click(function() {
+		axios.get(`/admin/loadTrashes`)
+			.then(({ data }) => {
+				$('#modal').html(data);
+				initForTrash();
+			});
+	});
+});
+function mainHandler() {
+	console.log('main');
+	$('.post-edit, .post-delete').click(function() {
 			const id = $(this).siblings('.post-id').text();
 			if ($(this).hasClass('post-edit')) {
 				axios.get(`/admin/loadOneAndEdit/${id}`)
 				.then(({ data }) => {
-					$('.modal-content').html(data);
+					$('#modal').html(data);
 					reinitModal();
-					// $('#edit-modal').showModal();
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
+					// $('#modal').showModal();
 				});
 			}
 			if ($(this).hasClass('post-delete')) {
@@ -131,17 +60,11 @@
 					toggleTrashIcon($(this));
 					togglePostStatus($(this), data.newStatus);
 					updateTrashCount(data.newCount);
-					toaster(id, data.newStatus);
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
+					flash(data.msg.level, data.msg.html);
 				});
 			}
 		});
-		$('#edit-modal button[type="submit"]').click(function() {
+		$('#modal button[type="submit"]').click(function() {
 			const form = $('#form-to-send');
 			const id = form.data('post-id');
 			const begin_at = form.find('#_begin_at_date').val() + ' ' + form.find('#_begin_at_hour').val();
@@ -155,7 +78,7 @@
 			.then(({data}) => {
 				M.toast({
 					html: `Post n°${data} créé avec succès`,
-					classes	: 'green'
+						classes	: 'green'
 				});
 			})
 			.catch(({ response }) => {
@@ -175,117 +98,85 @@
 				}
 			})
 		});
-		$('#create').click(function() {
-			axios.get(`/admin/loadBlankForm`)
-				.then(({ data }) => {
-					$('.modal-content').html(data);
-					reinitModal();
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-		});
-		const initForTrash = holà => {
-			// Thanks Materialize...
-			$('[id*="untrash"]').click(function() {
-				const isChecked = $(this).attr('checked');
-				if (isChecked) {
-					$(this).removeAttr('checked');
-				} else {
-					$(this).attr('checked', '');
-				}
-			});
-			$('#trash_cancel').click(function() {
-				$('#edit-modal').modal('close');
-			});
-			$('#trash_untrash_all').click(function() {
-				axios.post(`/admin/untrash`)
-				.then(aloha => {
-					M.toast({
-						html: 'Tout les trash sont passés en brouillons.',
-						classes	: 'green'
-					});
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-			});
-			$('#trash_untrash_some').click(function() {
-				const ids = [];
-				$('input[id*="untrash"][checked]').each(function(i,e) {
-					ids.push($(e).attr('id').replace('untrash-', ''))
-				});
-				axios.post(`/admin/untrash`, {
-					ids
-				})
-				.then(aloha => {
-					M.toast({
-						html: 'Tout les trash sont passés en brouillons.',
-						classes	: 'green'
-					});
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-			});
-			$('#trash_confirm_all').click(function() {
-				axios.post(`/admin/destroyTrash`)
-				.then(({data}) => {
-					
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-			});
-			$('#trash_confirm_some').click(function() {
-				const ids = [];
-				$('input[id*="untrash"][checked]').each(function(i,e) {
-					ids.push($(e).attr('id').replace('untrash-', ''))
-				});
-				axios.post(`/admin/destroyTrash`, {
-					ids,
-					some: true
-				})
-				.then(aloha => {
-					M.toast({
-						html: 'Tout les trash sont passés en brouillons.',
-						classes	: 'green'
-					});
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-			});
-		}
-		$('#trash').click(function() {
-			axios.get(`/admin/loadTrashes`)
-				.then(({ data }) => {
-					$('#edit-modal').html(data);
-					initForTrash();
-				})
-				.catch(err => {
-					M.toast({
-						html: err.message,
-						classes	: 'red'
-					});
-				});
-		});
-		
+}
+function initForTrash () {
+	// Thanks Materialize...
+	$('[id*="untrash"]').click(function() {
+		if ($(this).attr('checked'))
+			$(this).removeAttr('checked');
+		else
+			$(this).attr('checked', '');
 	});
+	$('#trash_cancel').click(function() { $('#modal').modal('close'); });
+	$('#trash_untrash_all').click(yo => {TrashModalAjaxHandler_withoutParameter('/admin/untrash')});
+	$('#trash_confirm_all').click(yo => {TrashModalAjaxHandler_withoutParameter('/admin/destroyTrash')});
+	$('#trash_untrash_some').click(yo => {TrashModalAjaxHandler_withParameters('/admin/untrash')});
+	$('#trash_confirm_some').click(yo => {TrashModalAjaxHandler_withParameters('/admin/destroyTrash')});
+}
+function FlashAndReloadContent(data) {
+	// Update html content
+	$('#table-target').html(data.viewTable);
+	$('#modal').html(data.viewModal);
+	updateTrashCount(data.newCount);
+	// Emit an event to trigger the function
+	// which is responsible of attach event.
+	// Necessary because of the html update
+	// detach them.
+	document.dispatchEvent(rebuildEvent);
+	initForTrash();
+	// Emit a message. See resources/view/partials/messager
+	flash(data.msg.level, data.msg.html);
+}
+function TrashModalAjaxHandler_withoutParameter(url) {
+	axios.post(url).then(({data}) => {
+		FlashAndReloadContent(data)
+	});
+}
+function TrashModalAjaxHandler_withParameters(url) {
+	const ids = [];
+	$('input[id*="untrash"][checked]').each(function(i,e) {
+		ids.push($(e).attr('id').replace('untrash-', ''))
+	});
+	axios.post(url, {
+		ids,
+		some: true
+	}).then(({data}) => {
+		FlashAndReloadContent(data)
+	});
+}
+function toggleTrashIcon (tdTarget) {
+	const i = tdTarget.find('i');
+	const newIcon = i.text() === 'delete' ? 'undo' : 'delete';
+	i.text(newIcon);
+}
+function togglePostStatus (tdTarget, status) {
+	tdTarget.siblings('.status').text(status);
+}
+function updateTrashCount (value) {
+	$('#trash-count').text(value);
+	if (value) {
+		$('#trash').removeClass('disabled');
+	} else {
+		$('#trash').addClass('disabled');
+	}
+}
+function toaster (id, status) {
+	let html = '';
+	if (status === 'trash')
+		html = `Post n°${id} ajouté à la corbeille.`;
+	else
+		html = `Post n°${id} retiré de la corbeille avec le status '${status}'.`;
+	M.toast({
+		html,
+			classes	: 'green'
+	});
+}
+function reinitModal () {
+	$('select').formSelect();
+	$('.datepicker').datepicker({container: 'body', format: 'yyyy-mm-dd'});
+	$('.timepicker').timepicker({container: 'body'});
+	M.updateTextFields();
+	M.textareaAutoResize($('textarea'));
+}
 </script>
 @endpush

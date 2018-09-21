@@ -30,7 +30,6 @@
 	</table>
 </div>
 <div class="modal-footer" style="height: 140px;">
-	{{-- <h5 class="center-align">Êtes-vous sûr de vouloir supprimer ces {{ $posts->count() }} posts ?</h5> --}}
 	<div class="center-align">
 		<button id="trash_cancel" class="btn btn-small blue">Annuler</button>
 	</div>

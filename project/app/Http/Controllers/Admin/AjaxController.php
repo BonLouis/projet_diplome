@@ -12,7 +12,15 @@ class AjaxController extends Controller
 		$newStatus = $post->status === 'trash' ? 'draft' : 'trash';
 		$post->update(['status' => $newStatus]);
 		$newCount = Post::trash()->count();
-		return compact('newStatus', 'newCount');
+		$msg = [
+			'level' => $newStatus === 'draft'
+						? 'successMsg'
+						: 'errorMsg',
+			'html' => $newStatus === 'draft'
+						? 'Post n°'.$post->id.' retiré de la corbeille'
+						: 'Post n°'.$post->id.' ajouté à la corbeille'
+		];
+		return compact('newStatus', 'newCount', 'msg');
 	}
 
 	public function loadBlankForm() {
@@ -30,33 +38,57 @@ class AjaxController extends Controller
 	}
 
 	public function untrash(Request $request) {
-		$ids = $request->get('ids');
-		if ($ids) {
-			$posts = Post::whereIn('id', $ids);
+		if($request->input('some')) {
+			$ids = $request->get('ids');
+			if($ids) {
+				$posts = Post::whereIn('id', $ids);
+				$msg = ['successMsg', 'Les posts sélectionnés ne sont plus dans la corbeille'];
+			} else {
+				$posts = [];
+				$msg = ['errorMsg', 'Vous n\'avez pas sélectionné de posts à retirer'];
+			}
 		} else {
 			$posts = Post::trash();
+			$msg = ['successMsg', 'Tout les posts ont été retirés de la corbeille'];
 		}
-		$posts->update(['status' => 'draft']);
-		return 'ok';
+		if ($posts)
+			$posts->update(['status' => 'draft']);
+		$data = json_encode(array(
+			'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
+			'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+			'newCount' => Post::trash()->count(),
+			'msg' => [
+				'level' => $msg[0],
+				'html' => $msg[1]
+			]
+		));
+		return $data;
 	}
 
 	public function destroyTrash(Request $request) {
-		// if($request->input('some')) {
-		// 	if($request->input('ids')) {
-		// 		$posts = Post::trash()->find($request->input('ids'));
-		// 	} else {
-		// 		;
-		// 	}
-		// } else {
-		// 	$posts = Post::trash()->get();
-		// }
-		// foreach($posts as $post) {
-		// 	$post->delete();
-		// }
+		if($request->input('some')) {
+			if($request->input('ids')) {
+				$posts = Post::trash()->find($request->input('ids'));
+				$msg = ['successMsg', 'Les posts sélectionnés ont bien été supprimés'];
+			} else {
+				$posts = [];
+				$msg = ['errorMsg', 'Vous n\'avez pas sélectionné de posts à supprimer'];
+			}
+		} else {
+			$posts = Post::trash()->get();
+			$msg = ['successMsg', 'La corbeille a bien été vidée'];
+		}
+		foreach($posts as $post) {
+			$post->delete();
+		}
 		$data = json_encode(array(
-			'viewTrash' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
-			'viewAll' => (String)view('back.index', ['posts' => Post::all(), 'trash' => Post::trash()->get()]),
-			'successMsg' => 'Votre mail à bien été envoyé ! Nous vous répondrons dès que possible.'
+			'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
+			'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+			'newCount' => Post::trash()->count(),
+			'msg' => [
+				'level' => $msg[0],
+				'html' => $msg[1]
+			]
 		));
 		return $data;
 	}
