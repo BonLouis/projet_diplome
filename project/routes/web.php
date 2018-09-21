@@ -22,16 +22,14 @@ Route::get('/stages', 'FrontController@showStages')->name('showStages');
 Route::get('/formations', 'FrontController@showFormations')->name('showFormations');
 Route::get('/contact', 'FrontController@showContact')->name('contact');
 Route::post('/contact', 'FrontController@sendContactMail')->name('contact.send');
-// TODO
-// Route::get('/category/{category}', 'FrontController@showPostByCategory')->where(['category'=>'[0-9]+']);
 
-Route::post('/search', 'SearchController@doQuery');
+Route::get('/search', 'SearchController@doQuery')->middleware(\Barryvdh\Cors\HandleCors::class);
 
 Route::middleware('auth')->namespace('Admin')->prefix('admin')->group(function() {
 	Route::resource('post', 'PostController');
 
 	// This route will be used with Ajax
-	Route::get('trash/{post}', 'PostController@trash')->where(['post'=>'[0-9]+'])->name('trash');
+	Route::get('trash/{post}', 'AjaxController@trash')->where(['post'=>'[0-9]+'])->name('trash');
 	Route::get('loadOneAndEdit/{post}', 'AjaxController@loadOneAndEdit')->where(['post'=>'[0-9]+']);
 	Route::get('loadBlankForm', 'AjaxController@loadBlankForm');
 	Route::get('loadTrashes', 'AjaxController@loadTrashes');

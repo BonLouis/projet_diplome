@@ -8,7 +8,7 @@ use App\{ Post, Category };
 class SearchController extends Controller
 {
     public function doQuery(Request $request) {
-    	$query = '%'.$request->input('query').'%';
+        $query = '%'.$request->query('search').'%';
     	if (preg_match('/^%#/', $query)) {
     		$query = preg_replace('/^%#/', '%', $query);
     		$posts = Post::join('category_post', 'posts.id', '=', 'category_post.post_id')

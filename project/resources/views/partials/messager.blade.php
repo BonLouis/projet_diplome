@@ -16,4 +16,19 @@
 		})
 	});
 </script>
+@else
+{{-- Usefull for the admin part --}}
+<script>
+	function flash(level, html) {
+		let classes;
+		if (level === 'successMsg')
+			classes = 'green';
+		else if (level === 'errorMsg')
+			classes = 'red';
+		M.toast({
+			html,
+			classes
+		});
+	}
+</script>
 @endif

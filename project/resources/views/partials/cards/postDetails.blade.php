@@ -1,51 +1,66 @@
-<div class="over-wrapper-container flex aic" id="bandeau">
-	<ul class="flex jcsa aic">
-		<li>{{ $post->type }}</li>
-		<li class="divider"></li>
-		@foreach($post->categories as $i => $category)
-		<li>
-			{{ $category->name . ($i + 1 !== $post->categories()->count() ? ', ' : '')}}
-		</li>
-		@endforeach
-	</ul>
+<div class="over-wrapper-container blue-grey lighten-1 flex aic jcc" id="bandeau">
+	<h3 class="valign-wrapper my-2 white-text">{{ ucfirst($post->type) }} - {{ ucfirst($post->title) }}</h3>
 </div>
-
-
-
-
-
-
-
-<img src="{{ $post->picture->link }}">
-<span class="card-title">{{ $post->title }}</span>
-<p class="truncate">{{ $post->description }}</p>
-<div id="begin{{$post->id}}">Démarre dans {{ $post->remainingTimeString() }}</div>
-<div id="seats{{$post->id}}">{{ $post->max_seats }} places</div>
-@foreach($post->categories as $i => $category)
-{{ $category->name . ($i + 1 !== $post->categories()->count() ? ', ' : '')}}
-@endforeach</div>
-{{-- 
-
-###
-
- --}}
-<div class="container-fluid d-flex flex-column" style="flex:1;">
-<div class="row" style="flex:1;">
-	<div class="col-md-3"
-		style="
-		background-image: url('{{ $post->picture->link }}')">
+<div id="bg" style="background-image: url('{{ $post->picture->link }}')">
+	<div id="overlay" style="background-color: rgba(255,255,255,.5)">
+		<div class="row">
+			<div class="col s12">
+				<fieldset>
+					<legend>Description</legend>
+					<p>
+						{{ $post->description }}
+					</p>
+				</fieldset>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s6">
+				<fieldset>
+					<legend>Date de début</legend>
+					<p>
+						{{ $post->begin_at }}
+					</p>
+				</fieldset>
+			</div>
+			<div class="col s6">
+				<fieldset>
+					<legend>Date de fin</legend>
+					<p>
+						{{ $post->end_at }}
+					</p>
+				</fieldset>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s6">
+				<fieldset>
+					<legend>Nombres de places</legend>
+					<p>
+						{{ $post->max_seats }}
+					</p>
+				</fieldset>
+			</div>
+			<div class="col s6">
+				<fieldset>
+					<legend>Prix</legend>
+					<p>
+						{{ $post->priceWithCurrency() }}
+					</p>
+				</fieldset>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<fieldset>
+					<legend>Tags</legend>
+					<p>
+						@foreach($post->categories as $i => $category)
+						{{ $category->name . ($i + 1 !== $post->categories()->count() ? ', ' : '')}}
+						@endforeach
+					</p>
+				</fieldset>
+			</div>
+		</div>
+		<div id="begin{{$post->id}}">Démarre dans {{ $post->remainingTimeString() }}</div>
 	</div>
-	<div class="col-md-5 align-self-center">
-		<h1>{{ $post->title }}</h1>
-		<p class="text-justify">{{ $post->description }}</p>
-		
-	</div>
-	<div class="col-md-4 list-group align-self-center">
-		<li class="list-group-item">{{ $post->ucType() }}</li>
-		<li class="list-group-item">Commence le {{ $post->begin_at }}</li>
-		<li class="list-group-item">Fini le {{ $post->end_at }}</li>
-		<li class="list-group-item">{{ $post->max_seats }} places</li>
-		<li class="list-group-item">{{ $post->priceWithCurrency() }}</li>
-	</div>
-</div>
 </div>

@@ -24,7 +24,7 @@ class InjectInsideViewServiceProvider extends ServiceProvider
         $this->path = $this->app->request->getPathInfo();
 
         $this->titles = [
-            '/' => 'Bienvenue sur le site de machin',
+            '/' => 'Bienvenue chez nous',
             '/formations' => 'Toutes nos formations',
             '/stages' => 'Tout nos stages',
         ];

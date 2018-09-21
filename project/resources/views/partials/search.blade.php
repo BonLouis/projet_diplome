@@ -25,15 +25,16 @@
 		});
 		$('#search-modal').keypress(function(e) { // "on.('enter', ..."
 			if (e.which === 13) {
-				axios.post('/search', {
-					query: $('#search').val()
+				axios.get('/search', {
+					params: {
+						search: $('#search').val()
+					}
 				})
 				.then(({ data }) => {
-					console.log('tr');
 					$('#search-results').html('');
 					$('#search-results').html(data);
 					handlePagination();
-					$('.tabs').tabs();
+					$('#search-results .tabs').tabs();
 				})
 				.catch(a => {
 					console.log(a);
@@ -43,10 +44,11 @@
 		function handlePagination() {
 			$('.pagination a').click(function(e) {
 				e.preventDefault();
-				axios.post($(this).attr('href'))
+				axios.get($(this).attr('href'))
 				.then(({ data }) => {
+					$('#search-results').html('');
 					$('#search-results').html(data);
-					handlePagination();
+					$('#search-results .tabs').tabs();
 				})
 				.catch(a => {
 					console.log(a);
