@@ -14,7 +14,7 @@ class InjectInsideViewServiceProvider extends ServiceProvider
     protected $user;
 
     public function boot() {
-        app('view')->composer('partials.nav', function ($view) {
+        app('view')->composer('front.index', function ($view) {
             $title = $this->titles[$this->path] ?? null;
             $view->with(compact('title'));
         });
@@ -24,7 +24,7 @@ class InjectInsideViewServiceProvider extends ServiceProvider
         $this->path = $this->app->request->getPathInfo();
 
         $this->titles = [
-            '/' => 'Bienvenue chez nous',
+            '/' => 'Quelle formation allez-vous choisir aujourd\'hui ?',
             '/formations' => 'Toutes nos formations',
             '/stages' => 'Tout nos stages',
         ];

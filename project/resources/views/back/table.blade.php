@@ -1,3 +1,4 @@
+@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))
 <table class="responsive-table highlight">
 	<thead>
 		<tr>
@@ -39,3 +40,4 @@
 	@endforeach
 	</tbody>
 </table>
+@includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))

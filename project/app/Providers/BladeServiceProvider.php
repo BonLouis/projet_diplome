@@ -6,23 +6,22 @@ use Illuminate\Support\ServiceProvider;
 
 class BladeServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        //
-    }
-
-    /**
-     * Register services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
+        /**
+         * @var
+         */
+        \Blade::directive('var', function ($expression) {
+            $p = explode(' = ', $expression);
+            return "<?php {$p[0]} = {$p[1]}; ?>";
+        });
+        /**
+         * @admin,
+         * @else,
+         * @endadmin
+         */
+        \Blade::if('admin', function () {
+            return auth()->check() && auth()->user()->isAdmin();
+        });
     }
 }

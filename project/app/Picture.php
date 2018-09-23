@@ -17,6 +17,6 @@ class Picture extends Model
 	// Mutateurs
 	public function getLinkAttribute($value) {
 		// dd(request()->getBaseUrl());
-		return url('/images').'/'.$value;
+		return url('/images/posts').'/'.$value;
 	}
 }

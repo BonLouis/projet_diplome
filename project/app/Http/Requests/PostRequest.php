@@ -25,7 +25,8 @@ class PostRequest extends FormRequest
             'end_at' => 'required|date|after:begin_at',
             'status' => ['required', Rule::in(['draft', 'published', 'trash'])],
             'open' => 'required|boolean',
-            'picture_url' => ['required', 'url', new ImageUrl] 
+            'picture_url' => ['required', 'url', new ImageUrl],
+            'categories' => 'required' 
         ];
     }
 }

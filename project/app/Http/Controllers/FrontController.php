@@ -41,7 +41,7 @@ class FrontController extends Controller
             'email' => 'required|email',
             'body' => 'required'
         ]);
-        Mail::to('admin@admin.fr')->send(new Contact($request->except('_token')));
+        Mail::to('blouis@alwaysdata.net')->send(new Contact($request->except('_token')));
         return redirect('/')->with('successMsg', 'Votre mail à bien été envoyé ! Nous vous répondrons dès que possible.');
     }
 }

@@ -25,6 +25,8 @@
 			classes = 'green';
 		else if (level === 'errorMsg')
 			classes = 'red';
+		else if (level === 'infoMsg')
+			classes = 'blue';
 		M.toast({
 			html,
 			classes

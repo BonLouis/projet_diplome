@@ -15,9 +15,6 @@
 			<div class="input-field col s6">
 				<select required id="type" name="type">
 					<option
-						@if($post->type === null) selected @endif
-					disabled hidden>Type du cours</option>
-					<option
 						value="formation" @if(old('type') === 'formation' || $post->type === 'formation' || !$post->id) selected @endif
 					>Formation</option>
 					<option
@@ -90,18 +87,8 @@
 				<span class="helper-text"></span>
 			</div>
 		</div>
-		<div class="row">
-			{{-- END FORM-GROUP --}}
-			{{-- FORM-GROUP --}}
-			<div class="input-field col s6">
-				<input type="hidden" name="begin_at">
-				<span class="helper-text"></span>
-			</div>
-			<div class="input-field col s6">
-				<input name="end_at" type="hidden">
-				<span class="helper-text"></span>
-			</div>
-		</div>
+		<input type="hidden" name="begin_at">
+		<input name="end_at" type="hidden">
 		{{-- END FORM-ROW --}}
 		{{-- FORM-ROW --}}
 		<div class="row">
@@ -113,16 +100,22 @@
 					<p>
 						<label for="published">
 							<input id="published" name="status" type="radio"  value="published"
-							@if( (old('status') === 'published' || $post->status === 'published') && old('status') !== 'draft' ) checked @endif>
+							@if( (old('status') === 'published' || $post->status === 'published') && old('status') !== 'draft' && old('status') !== 'trash' ) checked @endif>
 							<span>Publié</span>
 						</label>
 					</p>
 					<p>
 						<label for="draft">
 							<input id="draft" name="status" type="radio"  value="draft"
-							@if( ((old('status') === 'draft' || $post->status === 'draft') && old('status') !== 'published' ) || !$post->id) checked @endif>
+							@if( ((old('status') === 'draft' || $post->status === 'draft') && old('status') !== 'published' && old('status') !== 'trash' ) || !$post->id) checked @endif>
 							<span>Brouillon</span>
-							<span class="helper-text"></span>
+						</label>
+					</p>
+					<p>
+						<label for="trash">
+							<input id="trash" name="status" type="radio"  value="trash"
+							@if( ((old('status') === 'trash' || $post->status === 'trash') && old('status') !== 'published' && old('status') !== 'draft' )) checked @endif>
+							<span>À jeter</span>
 						</label>
 					</p>
 				</fieldset>
@@ -144,12 +137,11 @@
 							<input id="is_not_open" name="open" type="radio"  value="0"
 							@if( (old('open') == 0 || $post->open === 0) && old('open') !== '1' ) checked @endif>
 							<span>Fermées</span>
-							<span class="helper-text"></span>
 						</label>
 					</p>
 				</fieldset>
 			</div>
-			{{-- END FORM-GROUP --}}
+			
 		</div>
 		{{-- END FORM-ROW --}}
 		<div class="row">
@@ -170,9 +162,22 @@
 				</div>
 			</div>
 			<div class="col s6 d-flex align-items-center justify-content-center">
-				<img src="{{ $post->picture->link ?? 'https://dummyimage.com/600x400/ccc/000&text=Votre future image'}}" width="200">
+				<img id="img_preview" src="{{ $post->picture->link ?? 'https://dummyimage.com/600x400/ccc/000&text=Votre future image'}}" width="200">
 			</div>
 		</div>
+		{{-- END FORM-GROUP --}}
+			<div class="row">
+				<div class="input-field col s12">
+					<select multiple id="categories" name="categories[]">
+						@foreach($categories as $cat)
+						<option
+							value="{{$cat->id}}" @if(old('categories') === $cat->id || $post->categories->contains('name', $cat->name)) selected @endif
+						>{{$cat->name}}</option>
+						@endforeach
+					</select>
+					<label for="categories">Catégories</label>
+				</div>
+			</div>
 	</form>
 </div>
 <div class="modal-footer center-align">

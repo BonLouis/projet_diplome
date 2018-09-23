@@ -28,6 +28,6 @@ class Contact extends Mailable
      */
     public function build()
     {
-        return $this->from('monsite@chezmoi.com')->view('emails.contact');
+        return $this->from('monsite@formation.com')->view('emails.contact');
     }
 }

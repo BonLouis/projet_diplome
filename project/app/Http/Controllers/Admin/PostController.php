@@ -24,7 +24,7 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $posts = Post::all();
+        $posts = Post::paginate(10);
         $trash = Post::trash();
         return view('back.index', compact('posts', 'trash'));
     }
@@ -45,7 +45,8 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(PostRequest $request) {
-        $post = Post::create($request->except(['picture_url']));
+        $post = Post::create($request->except(['picture_url', 'picture_down', 'categories']));
+        $post->categories()->attach($request->categories);
         $link = str_random(12) . '.jpg';
         $file = file_get_contents($request->picture_url);
         Storage::disk('local')->put($link, $file);
@@ -54,7 +55,16 @@ class PostController extends Controller
             'post_id' => $post->id,
             'title' => $post->title
         ]);
-        return $post->id;
+        $data = json_encode(array(
+            'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
+            'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+            'newCount' => Post::trash()->count(),
+            'msg' => [
+                'level' => 'successMsg',
+                'html' => 'Votre post a bien été enregistré'
+            ]
+        ));
+        return $data;
     }
 
     /**
@@ -85,7 +95,8 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(PostRequest $request, Post $post) {
-        $post->update($request->except(['picture_url']));
+        $post->update($request->except(['picture_url', 'categories']));
+        $post->categories()->sync($request->categories);
         if ($post->picture->link !== $request->picture_url) {
             $url = preg_replace('/(\/\/\w+):.+/', '$1', url('/'));
             $url = preg_replace('/\//', '\/', $url);
@@ -106,7 +117,16 @@ class PostController extends Controller
         } else {
             // No changes in url, we ignore it.
         }
-        return 'ok';
+        $data = json_encode(array(
+            'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
+            'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+            'newCount' => Post::trash()->count(),
+            'msg' => [
+                'level' => 'successMsg',
+                'html' => 'Le post n°'.$post->id.' a bien été mis à jour'
+            ]
+        ));
+        return $data;
     }
 
     /**

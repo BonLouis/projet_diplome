@@ -1,66 +1,49 @@
-<div class="over-wrapper-container blue-grey lighten-1 flex aic jcc" id="bandeau">
-	<h3 class="valign-wrapper my-2 white-text">{{ ucfirst($post->type) }} - {{ ucfirst($post->title) }}</h3>
+
+@section('css')
+	<link rel="stylesheet" href="{{ asset('font/css/all.css') }}">
+@endsection
+
+@section('title')
+	{{ ucfirst($post->type) }} <br>
+	- <br>
+	{{ $post->title }} <br>
+	<span class="little-text italic">
+		Démarre dans {{ $post->remainingTimeString() }}
+	</span>
+@endsection
+<div class="container">
+	<p id="description" class="flow-text">{{ $post->description }}</p>
 </div>
-<div id="bg" style="background-image: url('{{ $post->picture->link }}')">
-	<div id="overlay" style="background-color: rgba(255,255,255,.5)">
-		<div class="row">
-			<div class="col s12">
-				<fieldset>
-					<legend>Description</legend>
-					<p>
-						{{ $post->description }}
-					</p>
-				</fieldset>
+<div id="bandeau">
+<div class="container valign-wrapper row">
+		<div class="col m12 l6" id="img-container">
+			<div>
+				<img src="{{ $post->picture->link }}" alt="{{ $post->picture->title }}" class="responsive-img z-depth-3">
 			</div>
 		</div>
-		<div class="row">
-			<div class="col s6">
-				<fieldset>
-					<legend>Date de début</legend>
-					<p>
-						{{ $post->begin_at }}
-					</p>
-				</fieldset>
-			</div>
-			<div class="col s6">
-				<fieldset>
-					<legend>Date de fin</legend>
-					<p>
-						{{ $post->end_at }}
-					</p>
-				</fieldset>
-			</div>
+		<div class="col m12 l6">
+			<ul class="collection z-depth-3">
+				<li class="collection-item valign-wrapper"><i class="fal fa-euro-sign"></i> Coûte {{ $post->dotPrice() }} euros</li>
+				<li class="collection-item valign-wrapper"><i class="material-icons">timer</i> Commence le {{ $post->humanBegin() }}</li>
+				<li class="collection-item valign-wrapper"><i class="material-icons">timer_off</i> Fini le {{ $post->humanEnd() }}</li>
+				<li class="collection-item valign-wrapper"><i class="material-icons">group_add</i> 
+					@if($post->freeSeats()) Il reste {{ $post->freeSeats() }} places
+					@else Il ne reste plus de place
+				@endif</li>
+				<li class="collection-item valign-wrapper"><i class="material-icons">group</i> 
+					@if($post->takenSeats()) {{ $post->takenSeats() }} personnes sont inscrites
+					@else Personne n'est inscrit
+				@endif</li>
+			</ul>
 		</div>
-		<div class="row">
-			<div class="col s6">
-				<fieldset>
-					<legend>Nombres de places</legend>
-					<p>
-						{{ $post->max_seats }}
-					</p>
-				</fieldset>
-			</div>
-			<div class="col s6">
-				<fieldset>
-					<legend>Prix</legend>
-					<p>
-						{{ $post->priceWithCurrency() }}
-					</p>
-				</fieldset>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col s12">
-				<fieldset>
-					<legend>Tags</legend>
-					<p>
-						@foreach($post->categories as $i => $category)
-						{{ $category->name . ($i + 1 !== $post->categories()->count() ? ', ' : '')}}
-						@endforeach
-					</p>
-				</fieldset>
-			</div>
-		</div>
-		<div id="begin{{$post->id}}">Démarre dans {{ $post->remainingTimeString() }}</div>
+	</div>
+</div>
+<div class="row center-align container">
+	<div class="col s12 l4 offset-l4">
+		<ul id="tags">
+			@foreach($post->categories as $i => $category)
+			<li>{{ $category->name }}</li>
+			@endforeach
+		</ul>
 	</div>
 </div>

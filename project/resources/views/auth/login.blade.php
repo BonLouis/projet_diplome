@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-<div class="row py-5">
+<div class="row py-5 container">
     <div class="col s12 m12">
         <div class="card">
             <div class="card-content">

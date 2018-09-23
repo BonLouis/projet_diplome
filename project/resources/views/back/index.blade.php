@@ -1,36 +1,48 @@
 @extends('back.master')
 @section('content')
-<div></div>
 {{-- Top buttons --}}
 <div class="section center-align">
-	<a id="create" class="waves-effect waves-light btn-small modal-trigger" href="#modal"><i class="material-icons left">add_circle</i>Créer</a>
-	{{-- <a class="waves-effect waves-light btn-small"><i class="material-icons left">mode_edit</i>Édition rapide</a> --}}
+	<a id="create" class="waves-effect waves-light btn-small modal-trigger my-2" href="#modal"><i class="material-icons left">add_circle</i>Créer</a>
 	<a id="trash" href="#modal" class="waves-effect waves-light btn-small modal-trigger{{ $trash->count() ? '' : ' disabled' }}">
 		<i class="material-icons left">delete</i>
 		Corbeille (<span id="trash-count">{{ $trash->count() }}</span>)
 	</a>
 </div>
-
-{{-- Posts list --}}
+<div class="row">
+	<div class="input-field col s12 m4 offset-m4">
+		<i class="material-icons prefix">search</i>
+		<input id="search" name="search" type="text">
+		<label for="search">Votre recherche</label>
+	</div>
+</div>
+{{-- Posts list and pagination --}}
+{{--  --}}
 <div id="table-target">
 	@include('back.table', compact('posts'))
 </div>
-<div id="modal" class="modal modal-fixed-footer">
-</div>
+{{--  --}}
+{{-- 
+ --}}
+<div id="modal" class="modal modal-fixed-footer"></div>
 @endsection
+{{--
+	-  -  -  -  -  -  Javascript part  -  -  -  -  -  -  -  -  -
+--}}
 @push('backScripts')
 <script>
-// Will be triggered on html rebuild with ajax content.
+/*
+	Will be triggered on html rebuild with ajax content.
+ */
 const rebuildEvent = new Event('rebuild');
 document.addEventListener('rebuild', mainHandler)
-
 document.addEventListener('DOMContentLoaded', ready => {
 	$('#modal').modal();
 	mainHandler();
 	$('#create').click(function() {
+		reinitModal();
 		axios.get(`/admin/loadBlankForm`)
 			.then(({ data }) => {
-				$('.modal-content').html(data);
+				$('#modal').html(data);
 				reinitModal();
 			});
 	});
@@ -41,63 +53,45 @@ document.addEventListener('DOMContentLoaded', ready => {
 				initForTrash();
 			});
 	});
+	$('#search').keyup(function(e) { // "on.('enter', ..."
+	// if (e.which === 13) {
+		axios.get('/search', {
+			params: {
+				search: $('#search').val(),
+				admin: 'true'
+			}
+		})
+		.then(({ data }) => {
+			FlashAndReloadContent(data, true);
+			handlePagination();
+		})
+		.catch(a => {
+			console.log(a);
+		})
+	// }
+});
 });
 function mainHandler() {
-	console.log('main');
 	$('.post-edit, .post-delete').click(function() {
-			const id = $(this).siblings('.post-id').text();
-			if ($(this).hasClass('post-edit')) {
-				axios.get(`/admin/loadOneAndEdit/${id}`)
-				.then(({ data }) => {
-					$('#modal').html(data);
-					reinitModal();
-					// $('#modal').showModal();
-				});
-			}
-			if ($(this).hasClass('post-delete')) {
-				axios.get(`/admin/trash/${id}`)
-				.then(({ data }) => {
-					toggleTrashIcon($(this));
-					togglePostStatus($(this), data.newStatus);
-					updateTrashCount(data.newCount);
-					flash(data.msg.level, data.msg.html);
-				});
-			}
-		});
-		$('#modal button[type="submit"]').click(function() {
-			const form = $('#form-to-send');
-			const id = form.data('post-id');
-			const begin_at = form.find('#_begin_at_date').val() + ' ' + form.find('#_begin_at_hour').val();
-			const end_at = form.find('#_end_at_date').val() + ' ' + form.find('#_end_at_hour').val();
-			form.find('[name="begin_at"]').val(begin_at);
-			form.find('[name="end_at"]').val(end_at);
-			axios(`/admin/post/${id}`, {
-				method: $('[name="_method"]').attr('value'),
-				data: form.serialize()
-			})
-			.then(({data}) => {
-				M.toast({
-					html: `Post n°${data} créé avec succès`,
-						classes	: 'green'
-				});
-			})
-			.catch(({ response }) => {
-				$('#form-to-edit input[name]').removeClass('invalid');
-				const form = $('#form-to-send');
-				for (const name in response.data.errors) {
-					for (const error of response.data.errors[name]) {
-						// We just check that because of the hidden input dynamically charged
-						if (name === 'end_at') {
-							form.find('#_end_at_date').addClass('invalid');
-							form.find('#_end_at_date ~ .helper-text').attr('data-error', error)
-						} else {
-							form.find(`[name="${name}"]`).addClass('invalid');
-							form.find(`[name="${name}"] ~ .helper-text`).attr('data-error', error)
-						}
-					}
-				}
-			})
-		});
+		const id = $(this).siblings('.post-id').text();
+		if ($(this).hasClass('post-edit')) {
+			axios.get(`/admin/loadOneAndEdit/${id}`)
+			.then(({ data }) => {
+				$('#modal').html(data);
+				reinitModal();
+			});
+		}
+		else if ($(this).hasClass('post-delete')) {
+			axios.get(`/admin/trash/${id}`)
+			.then(({ data }) => {
+				toggleTrashIcon($(this));
+				togglePostStatus($(this), data.newStatus);
+				updateTrashCount(data.newCount);
+				flash(data.msg.level, data.msg.html);
+			});
+		}
+	});
+	
 }
 function initForTrash () {
 	// Thanks Materialize...
@@ -113,9 +107,13 @@ function initForTrash () {
 	$('#trash_untrash_some').click(yo => {TrashModalAjaxHandler_withParameters('/admin/untrash')});
 	$('#trash_confirm_some').click(yo => {TrashModalAjaxHandler_withParameters('/admin/destroyTrash')});
 }
-function FlashAndReloadContent(data) {
+function FlashAndReloadContent(data, searchMode = false) {
 	// Update html content
 	$('#table-target').html(data.viewTable);
+	if (searchMode) {
+		document.dispatchEvent(rebuildEvent);
+		return 0;
+	}
 	$('#modal').html(data.viewModal);
 	updateTrashCount(data.newCount);
 	// Emit an event to trigger the function
@@ -174,9 +172,67 @@ function toaster (id, status) {
 function reinitModal () {
 	$('select').formSelect();
 	$('.datepicker').datepicker({container: 'body', format: 'yyyy-mm-dd'});
-	$('.timepicker').timepicker({container: 'body'});
+	$('.timepicker').timepicker({container: 'body', twelveHour: false});
 	M.updateTextFields();
 	M.textareaAutoResize($('textarea'));
+	$('#modal button[type="submit"]').click(function() {
+		const form = $('#form-to-send');
+		const id = form.data('post-id');
+		const begin_at = form.find('#_begin_at_date').val() + ' ' + form.find('#_begin_at_hour').val();
+		const end_at = form.find('#_end_at_date').val() + ' ' + form.find('#_end_at_hour').val();
+		form.find('[name="begin_at"]').val(begin_at);
+		form.find('[name="end_at"]').val(end_at);
+		axios(`/admin/post/${id}`, {
+			method: $('[name="_method"]').attr('value'),
+			data: form.serialize()
+		})
+		.then(({data}) => {
+			console.log(data);
+			FlashAndReloadContent(data);
+			$('#modal').modal('close');
+		})
+		.catch(({ response }) => {
+			flash('errorMsg', 'Votre formulaire contient des erreurs');
+			$('#form-to-edit input[name]').removeClass('invalid');
+			const form = $('#form-to-send');
+			for (const name in response.data.errors) {
+				for (const error of response.data.errors[name]) {
+					// We just check that because of the hidden input dynamically charged
+					if (name === 'end_at') {
+						form.find('#_end_at_date').addClass('invalid');
+						form.find('#_end_at_date ~ .helper-text').attr('data-error', error)
+					} else {
+						form.find(`[name="${name}"]`).addClass('invalid');
+						form.find(`[name="${name}"] ~ .helper-text`).attr('data-error', error)
+					}
+				}
+			}
+		})
+	});
+	$('#picture_url').change(function() {
+		$('#img_preview').attr('src', $(this).val() || 'https://dummyimage.com/600x400/ccc/000&text=Votre future image');
+	});
+}
+
+
+function handlePagination() {
+	$('.pagination a').click(function(e) {
+		e.preventDefault();
+		axios.get($(this).attr('href'), {
+			params: {
+				search: $('#search').val(),
+				admin: 'true',
+
+			}
+		})
+		.then(({ data }) => {
+			FlashAndReloadContent(data, true);
+			handlePagination();
+		})
+		.catch(a => {
+			console.log(a);
+		})
+	})
 }
 </script>
 @endpush

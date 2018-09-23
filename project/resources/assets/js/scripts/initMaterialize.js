@@ -10,14 +10,14 @@ const checkScreenAndLoadBackground = () => {
 	return 0;
 }
 
-let size = 'h=1000&';
-// if ($(window).width() < 1000)
-// 	size = `h=${$(window).width()}&w=${$(window).height()}&`;
+// let size = 'h=1000&';
+// // if ($(window).width() < 1000)
+// // 	size = `h=${$(window).width()}&w=${$(window).height()}&`;
 
-$('#header').css(
-	'background-image',
-	`url('https://images.unsplash.com/photo-1503264116251-35a269479413?${size}crop=bottom&q=100&fm=jpg')`
-);
+// $('#header').css(
+// 	'background-image',
+// 	`url('https://images.unsplash.com/photo-1503264116251-35a269479413?h=1000&crop=bottom&q=100&fm=jpg')`
+// );
 // Materialize components initialization
 $('#sidenav li, #nav-mobile li').each(function() {
 	if ($(this).find('a').attr('href') === location.pathname) {

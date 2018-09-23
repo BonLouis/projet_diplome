@@ -1,6 +1,6 @@
 <nav>
 	<div class="nav-wrapper">
-		<a href="#" class="brand-logo">Administration</a>
+		<a href="{{ route('home') }}" class="brand-logo"><img src="{{asset('images/logo.png')}}" alt=""></a>
 		{{-- Nav for desktop --}}
 		<ul id="nav-mobile" class="right hide-on-med-and-down">
 			<li class="white-text"><a href="{{ route('home') }}">Accueil</a></li>

@@ -30,7 +30,7 @@
         @include('partials.nav')
     </header>
 
-    <main class="container">
+    <main>
         @yield('content')
     </main>
 

@@ -1,4 +1,4 @@
-// $vwMinusScrollbar: calc(100vw - #{$scrollbar-width});
+$vwMinusScrollbar: calc(100vw - #{$scrollbar-width});
 .flex {
 	display: flex;
 }
@@ -9,7 +9,7 @@
 	justify-content: space-around;
 }
 .jcsb {
-	justify-content: space-around;
+	justify-content: space-between;
 }
 .aic {
 	align-items: center;
@@ -29,9 +29,14 @@
 .inline > * {
 	display: inline;
 }
+.little-text {
+	font-size: 1.2rem;
+}
+.italic {
+	font-style: italic;
+}
 .over-wrapper-container {
 	position: relative;
-	background-color: #eee;
 	overflow-x: hidden;
 	width: 100vw;
 	left: -5vw;
@@ -44,18 +49,5 @@
 	// and will applied the previous properties. 
 	overflow: auto;
 	overflow-x: hidden;
-	overflow: overlay;
-}
-@media only screen and (min-width: 601px) {
-	.over-wrapper-container {
-		$half: calc(-15vw / 2);
-	    left: $half;
-		padding: 0 $half 0 $half;
-	}
-}
-@media only screen and (min-width: 993px) {
-	.over-wrapper-container {
-	    left: -15vw;
-		padding: 0 15vw 0 15vw;
-	}
+	// overflow: overlay;
 }

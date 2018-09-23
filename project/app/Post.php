@@ -32,7 +32,14 @@ class Post extends Model
         return $this->belongsToMany(Registration::class);
     }
 
-    
+    public function hasCategory($key, $val) {
+        foreach ($this->categories as $category) {
+            dd($category->$key);
+            if ($category->$key === $val)
+                return true;
+        }
+        return false;
+    }
     // Scopes
 
     public function scopePublished($query) {
@@ -68,14 +75,13 @@ class Post extends Model
 
     // Mutators
 
-    // public function getTypeAttribute($value) {
-    //     return ucfirst($value);
-    // }
-    
     public function getTitleAttribute($value) {
         return ucfirst($value);
     }
-    
+    public function dotPrice() {
+        // dd('ypo');
+        return preg_replace('/^(\d+)(\d{3})\.(\d+)$/', '$1.$2,$3', $this->price);
+    }
     public function priceWithCurrency() {
         return $this->price . ' €';
     }
@@ -132,6 +138,26 @@ class Post extends Model
         $now = Carbon::now();
         $start = new Carbon($this->begin_at);
         return $now->diff($start)->h;
+    }
+    
+    public function humanBegin() {
+        setlocale(LC_TIME, 'fr_FR.UTF8', 'fr.UTF8', 'fr_FR.UTF-8', 'fr.UTF-8');
+        $date = new \DateTime($this->begin_at);
+        $ts = $date->getTimestamp();
+        return strftime('%e %B %Y', $ts) . ' à ' . strftime('%Hh%M', $ts);
+    }
+    public function humanEnd() {
+        setlocale(LC_TIME, 'fr_FR.UTF8', 'fr.UTF8', 'fr_FR.UTF-8', 'fr.UTF-8');
+        $date = new \DateTime($this->end_at);
+        $ts = $date->getTimestamp();
+        return strftime('%e %B %Y', $ts) . ' à ' . strftime('%Hh%M', $ts);
+    }
+    
+    public function takenSeats() {
+        return $this->registrations->count();
+    }
+    public function freeSeats() {
+        return $this->max_seats - $this->takenSeats();
     }
 }
 

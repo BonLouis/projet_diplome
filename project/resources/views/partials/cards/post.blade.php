@@ -1,13 +1,13 @@
 @includeWhen(method_exists($posts, 'links'), 'partials.paginate', compact('posts'))
-{{--
-	This is a fix for the tab initialization.
-	When we make a research, if a card already on the main page appear,
-	It will not be properly init due to same tab ids.
-	It's not anymore a problem with a random id suffix.
---}}
-{{ $randId = uniqid() }}
-<div class="row">
+<div class="row container">
 	@foreach($posts as $post)
+	{{--
+		This is a fix for the tab initialization.
+		When we make a research, if a card already on the main page appear,
+		It will not be properly init due to same tab ids.
+		It's not anymore a problem with a random id suffix.
+	--}}
+	@var($randId = uniqid())
 	<div class="col s12 m6">
 		<div class="card large hoverable" style="height: 465px;">
 			<div class="card-image">

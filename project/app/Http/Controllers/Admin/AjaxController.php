@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\{ Post };
+use App\{ Post, Category };
 
 class AjaxController extends Controller
 {
@@ -25,11 +25,13 @@ class AjaxController extends Controller
 
 	public function loadBlankForm() {
 		$post = new Post;
-		return view('back.edit', compact('post'));
+		$categories = Category::orderBy('name')->get();
+		return view('back.edit', compact('post', 'categories'));
 	}
 
 	public function loadOneAndEdit(Post $post) {
-		return view('back.edit', compact('post'));
+		$categories = Category::orderBy('name')->get();
+		return view('back.edit', compact('post', 'categories'));
 	}
 
 	public function loadTrashes() {

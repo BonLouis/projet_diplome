@@ -1,0 +1,43 @@
+- Réaliser un site proposant des formations et des stages sur les métiers du Web
+---------------------------------------------------
+Technos:
+- Laravel / MySQL
+- Webpack
+- MailDev
+-----------------
+- Materialize
+- jQuery
+- Axios
+- SmoothScroll
+---------------------------------------------------
+Outils:
+- Trello
+- Git
+- SSH
+---------------------------------------------------
+Pages:
+- Accueil
+- Formations
+- Stages
+- Contact
+-----------------
+- Login
+- Administration
+---------------------------------------------------
+Demande:
+- Front-office------------------------------
+	- Deux plus récentes sur page d'accueil
+	- Menu secondaire footer
+	- Moteur de recherche paginé à 5
+	- Menu sans lien de connexion
+	- Page de formation/stage identiques
+	- Page de détail avec toutes les infos
+	- Page de contact connectée à MailDev
+- Back-office-------------------------------
+	- Admin via url
+	- CRUD en back-office
+---------------------------------------------------
+Bonus en back-office:
+- Recherche
+- Suppression multiple
+- Recherche
