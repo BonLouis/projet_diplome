@@ -1,0 +1,6 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/js/scripts/initMaterialize.js": "/js/scripts/initMaterialize.js",
+    "/js/scripts/beforeDOMLoad.js": "/js/scripts/beforeDOMLoad.js"
+}
