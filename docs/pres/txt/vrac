@@ -41,3 +41,19 @@ Bonus en back-office:
 - Recherche
 - Suppression multiple
 - Recherche
+
+
+1 Presentation de nous même
+2 reform brief
+3 Technos / outils
+4 Liste fonctionnelle / uml
+5 Démo (persona)
+6 Point de développement
+7 Conclusion
+
+Persona => {
+	Condition réaliste d'un utilisateur final
+}
+
+Administrateur Bob
+Utilisateur Jean
