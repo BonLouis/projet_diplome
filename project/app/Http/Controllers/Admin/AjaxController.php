@@ -8,6 +8,8 @@ use App\{ Post, Category };
 
 class AjaxController extends Controller
 {
+	private $paginate = 10;
+
 	public function trash(Post $post) {
 		$newStatus = $post->status === 'trash' ? 'draft' : 'trash';
 		$post->update(['status' => $newStatus]);
@@ -57,7 +59,7 @@ class AjaxController extends Controller
 			$posts->update(['status' => 'draft']);
 		$data = json_encode(array(
 			'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
-			'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+			'viewTable' => (String)view('back.table', ['posts' => Post::paginate($this->paginate)]),
 			'newCount' => Post::trash()->count(),
 			'msg' => [
 				'level' => $msg[0],
@@ -85,7 +87,7 @@ class AjaxController extends Controller
 		}
 		$data = json_encode(array(
 			'viewModal' => (String)view('back.trash', ['posts' => Post::trash()->get()]),
-			'viewTable' => (String)view('back.table', ['posts' => Post::all()]),
+			'viewTable' => (String)view('back.table', ['posts' => Post::paginate($this->paginate)]),
 			'newCount' => Post::trash()->count(),
 			'msg' => [
 				'level' => $msg[0],
@@ -94,4 +96,5 @@ class AjaxController extends Controller
 		));
 		return $data;
 	}
+	
 }

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 
         $user = new App\User;
         $user->name = 'admin';
-        $user->email = 'admin@admin.admin';
+        $user->email = 'admin@admin.fr';
         $user->password = password_hash('admin', PASSWORD_DEFAULT);
         $user->remember_token = str_random(10);
         $user->save();

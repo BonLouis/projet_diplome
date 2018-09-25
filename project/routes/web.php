@@ -28,6 +28,8 @@ Route::middleware('auth')->namespace('Admin')->prefix('admin')->group(function()
 
 	// This route will be used with Ajax
 	Route::get('trash/{post}', 'AjaxController@trash')->where(['post'=>'[0-9]+'])->name('trash');
+	Route::get('toggleStatus/{post}', 'PostController@toggleStatus')->where(['post'=>'[0-9]+'])->name('toggle.status');
+	Route::get('toggleOpen/{post}', 'PostController@toggleOpen')->where(['post'=>'[0-9]+'])->name('toggle.open');
 	Route::get('loadOneAndEdit/{post}', 'AjaxController@loadOneAndEdit')->where(['post'=>'[0-9]+']);
 	Route::get('loadBlankForm', 'AjaxController@loadBlankForm');
 	Route::get('loadTrashes', 'AjaxController@loadTrashes');

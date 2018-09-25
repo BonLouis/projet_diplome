@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', ready => {
 	$('#modal').modal();
 	mainHandler();
 	$('#create').click(function() {
-		reinitModal();
+		// reinitModal();
 		axios.get(`/admin/loadBlankForm`)
 			.then(({ data }) => {
 				$('#modal').html(data);
@@ -64,6 +64,25 @@ document.addEventListener('DOMContentLoaded', ready => {
 		.then(({ data }) => {
 			FlashAndReloadContent(data, true);
 			handlePagination();
+			$('.status span').each(function() {
+			let css = '';
+			let text = '';
+			switch($(this).text()) {
+				case 'published':
+					text = 'Publié';
+					css = 'green';
+					break;
+				case 'draft':
+					text = 'Brouillon';
+					css = 'blue';
+					break;
+				case 'trash':
+					text = 'Corbeille';
+					css = 'red';
+					break;
+			}
+			$(this).text(text).removeClass('red blue green').addClass(css);
+	});
 		})
 		.catch(a => {
 			console.log(a);
@@ -72,9 +91,9 @@ document.addEventListener('DOMContentLoaded', ready => {
 });
 });
 function mainHandler() {
+	// handlePagination();
 	$('.post-edit, .post-delete').click(function() {
 		const id = $(this).siblings('.post-id').text();
-		console.log(id);
 		if ($(this).hasClass('post-edit')) {
 			axios.get(`/admin/loadOneAndEdit/${id}`)
 			.then(({ data }) => {
@@ -91,6 +110,12 @@ function mainHandler() {
 				flash(data.msg.level, data.msg.html);
 			});
 		}
+		// else if ($(this).hasClass('back-open')) {
+		// 	axios.get(`/admin/toggleOpen/${id}`)
+		// 	.then(({ data }) => {
+		// 		FlashAndReloadContent(data);
+		// 	});
+		// }
 	});
 	
 }
@@ -125,6 +150,7 @@ function FlashAndReloadContent(data, searchMode = false) {
 	initForTrash();
 	// Emit a message. See resources/view/partials/messager
 	flash(data.msg.level, data.msg.html);
+	
 }
 function TrashModalAjaxHandler_withoutParameter(url) {
 	axios.post(url).then(({data}) => {
@@ -150,7 +176,10 @@ function toggleTrashIcon (tdTarget) {
 }
 function togglePostStatus (tdTarget, status) {
 	status = status === 'draft' ? 'Brouillon' : 'Corbeille';
-	tdTarget.siblings('.status').text(status);
+	const css = status === 'Brouillon' ? 'blue' : 'red';
+	const span = tdTarget.siblings('.status').find('span');
+	span.text(status).removeClass('red blue green').addClass(css);
+	
 }
 function updateTrashCount (value) {
 	$('#trash-count').text(value);
@@ -159,17 +188,6 @@ function updateTrashCount (value) {
 	} else {
 		$('#trash').addClass('disabled');
 	}
-}
-function toaster (id, status) {
-	let html = '';
-	if (status === 'trash')
-		html = `Post n°${id} ajouté à la corbeille.`;
-	else
-		html = `Post n°${id} retiré de la corbeille avec le status '${status}'.`;
-	M.toast({
-		html,
-			classes	: 'green'
-	});
 }
 function reinitModal () {
 	$('select').formSelect();
@@ -220,6 +238,8 @@ function reinitModal () {
 function handlePagination() {
 	$('.pagination a').click(function(e) {
 		e.preventDefault();
+		const page = $(this).attr('href').match(/page=(\d+)$/);
+		// debugger;
 		axios.get($(this).attr('href'), {
 			params: {
 				search: $('#search').val(),

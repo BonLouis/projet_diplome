@@ -16,7 +16,16 @@
 		})
 	});
 </script>
-@else
+@elseif(session('infoMsg'))
+<script>
+	document.addEventListener('DOMContentLoaded', bonjour => {
+		M.toast({
+			html: '{{ session('infoMsg') }}',
+			classes: 'blue'
+		})
+	});
+</script>
+@endif
 {{-- Usefull for the admin part --}}
 <script>
 	function flash(level, html) {
@@ -33,4 +42,3 @@
 		});
 	}
 </script>
-@endif

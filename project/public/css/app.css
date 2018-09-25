@@ -9829,7 +9829,7 @@ nav .brand-logo img {
   height: 100px;
   display: block;
   opacity: .1;
-  background-image: url(/images/two-quotes.svg?1a97334463b1710c2b0eba3441192bfb);
+  background-image: url(/images/two-quotes.svg?8f86cc66b0e3d392e6499818f0b27ca4);
 }
 
 #description::before {
@@ -9954,10 +9954,14 @@ main {
   padding: 5rem 0;
 }
 
-.back-info {
-  padding: .5rem .5rem;
+.back-status {
+  padding: .5rem 0;
   border-radius: 10px;
-  width: 5rem;
   display: block;
+  cursor: pointer;
+}
+
+.back-open {
+  cursor: pointer;
 }
 

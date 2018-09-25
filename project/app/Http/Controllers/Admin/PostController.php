@@ -23,7 +23,7 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) {
         $posts = Post::paginate(10);
         $trash = Post::trash();
         return view('back.index', compact('posts', 'trash'));
@@ -144,5 +144,38 @@ class PostController extends Controller
         $post->update(['status' => $newStatus]);
         $newCount = Post::trash()->count();
         return compact('newStatus', 'newCount');
+    }
+
+    public function toggleStatus(Post $post, Request $request) {
+        if (!!preg_match('/\?page/', url()->previous())) {
+            $page = preg_replace('/^.*(\?page=\d+)$/', '$1', url()->previous());
+        } else {
+            $page = false;
+        }
+
+        switch($post->status) {
+            case 'published':
+                $newStatus = 'draft';
+                break;
+            case 'draft':
+                $newStatus = 'published';
+                break;
+            case 'trash':
+                $newStatus = 'draft';
+                break;
+        }
+        $post->update(['status' => $newStatus]);
+        $infoMsg = 'Post n°'.$post->id.' : status passé à ' . $post->status;
+        return redirect('admin/post'.$page)->with(compact('infoMsg'));
+    }
+    public function toggleOpen(Post $post, Request $request) {
+        if (!!preg_match('/\?page/', url()->previous())) {
+            $page = preg_replace('/^.*(\?page=\d+)$/', '$1', url()->previous());
+        } else {
+            $page = '';
+        }
+        $post->update(['open' => !$post->open]);
+        $infoMsg = 'Post n°'.$post->id.' : inscriptions ' . ($post->open ? 'ouvertes' : 'fermées');
+        return redirect('admin/post'.$page)->with(compact('infoMsg'));
     }
 }
