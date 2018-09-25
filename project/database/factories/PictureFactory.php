@@ -42,11 +42,8 @@ $dlLoremPixAndReturnLink = function () {
 	} else {
 		dd($response);
 	}
-	// $file_small = file_get_contents('https://loremflickr.com/300/300?lock=' . $id);
-	
 	Storage::disk('local')->put($link, $file);
-	// Storage::disk('local')->put('s_' . $link, $file_small);
-	echo $link."\r\n";
+	echo "\t".$link."\t[".$y."/".$m."/".$d."]\t(".count(Storage::allFiles())."/".Config::get('seed.nb_posts').")\r\n";
 	return $link;
 };
 // We first get all files to count them and/or use their link

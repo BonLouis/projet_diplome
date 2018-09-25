@@ -11,9 +11,10 @@ class Post extends Model
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public static function boot() {
+        
         parent::boot();
 
-        static::deleting(function($post) { // before delete() method call this
+        static::deleting(function($post) {
              $post->picture()->delete();
              $post->categories()->detach();
              $post->registrations()->detach();

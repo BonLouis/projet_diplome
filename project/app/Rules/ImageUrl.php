@@ -51,6 +51,6 @@ class ImageUrl implements Rule
      */
     public function message()
     {
-        return 'This Url must point to a valid image.';
+        return "L'url doit pointer vers une image.";
     }
 }
