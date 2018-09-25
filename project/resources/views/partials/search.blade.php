@@ -46,9 +46,9 @@
 					$('#search-results').html('');
 					$('#search-results').html(data);
 					handlePagination();
-					$('#search-results .tabs').tabs();
 					$('#search-modal').addClass('modal-fixed-footer');
 					$('.modal-content').css('display', 'inherit');
+					$('#search-results .tabs').tabs();
 				})
 				.catch(a => {
 					console.log(a);
