@@ -24,16 +24,16 @@
 				</a>
 			</td>
 			<td>{{ $post->title }}</td>
-			<td>{{ $post->type }}</td>
+			<td>{{ ucfirst($post->type) }}</td>
 			<td>{{ $post->price }}</td>
 			{{-- <td>{{ $post->max_seats }}</td> --}}
 			{{-- <td>{{ $post->begin_at }}</td> --}}
 			{{-- <td>{{ $post->end_at }}</td> --}}
-			<td class="status">{{ $post->status }}</td>
-			<td>{{ $post->open }}</td>
+			<td class="status"><span class="{{ $post->statusClass() }} white-text center-align back-info">{{ $post->status }}</span></td>
+			<td class="back-infos"><span class="back-info white-text center-align lighten-2 {{ $post->open ? 'green' : 'red' }}">{{ $post->open ? 'Ouvert' : 'Fermé' }}</span></td>
 			<td class="post-delete">
 				<a class="btn-floating btn-small red">
-					<i class="material-icons">{{ $post->status === 'trash' ? 'undo' : 'delete'}}</i>
+					<i class="material-icons">{{ $post->status === 'Corbeille' ? 'undo' : 'delete'}}</i>
 				</a>
 			</td>
 		</tr>

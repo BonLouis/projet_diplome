@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', ready => {
 function mainHandler() {
 	$('.post-edit, .post-delete').click(function() {
 		const id = $(this).siblings('.post-id').text();
+		console.log(id);
 		if ($(this).hasClass('post-edit')) {
 			axios.get(`/admin/loadOneAndEdit/${id}`)
 			.then(({ data }) => {
@@ -148,6 +149,7 @@ function toggleTrashIcon (tdTarget) {
 	i.text(newIcon);
 }
 function togglePostStatus (tdTarget, status) {
+	status = status === 'draft' ? 'Brouillon' : 'Corbeille';
 	tdTarget.siblings('.status').text(status);
 }
 function updateTrashCount (value) {

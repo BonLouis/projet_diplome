@@ -160,6 +160,42 @@ class Post extends Model
     public function freeSeats() {
         return $this->max_seats - $this->takenSeats();
     }
+
+    public function statusClass() {
+        $css = '';
+        switch ($this->status) {
+            case 'Publié':
+                $css = 'green';
+                break;
+            case 'Brouillon':
+                $css = 'blue';
+                break;
+            case 'Corbeille':
+                $css = 'red';
+                break;
+        }
+        return $css;
+    }
+    // Getter for back-office
+    public function getStatusAttribute($value) {
+        // return \Route::current()->getName();
+        if (preg_match('/^post/', \Route::current()->getName())) {
+            switch($value) {
+                case 'published':
+                    return 'Publié';
+                case 'draft':
+                    return 'Brouillon';
+                case 'trash':
+                    return 'Corbeille';
+            }
+        }
+        return $value;
+        // dd(route()->current());
+        // if (route()->current()) {
+
+        // }
+    }
+    // public function
 }
 
 
