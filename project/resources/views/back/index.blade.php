@@ -182,7 +182,7 @@ function reinitModal () {
 		const end_at = form.find('#_end_at_date').val() + ' ' + form.find('#_end_at_hour').val();
 		form.find('[name="begin_at"]').val(begin_at);
 		form.find('[name="end_at"]').val(end_at);
-		axios(`/admin/post/${id}`, {
+		axios(`/admin/post${id ? '/' + id : ''}`, {
 			method: $('[name="_method"]').attr('value'),
 			data: form.serialize()
 		})
